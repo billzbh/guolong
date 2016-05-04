@@ -1,0 +1,81 @@
+
+/* Class = "UILabel"; text = "Cirrus Logic, Inc."; ObjectID = "3GH-eY-ix8"; */
+"3GH-eY-ix8.text" = "N/A";
+
+/* Class = "UILabel"; text = "N/A"; ObjectID = "5EV-jX-Dmv"; */
+"5EV-jX-Dmv.text" = "N/A";
+
+/* Class = "UILabel"; text = "On Device Version"; ObjectID = "74W-jT-fXi"; */
+"74W-jT-fXi.text" = "On Device Version";
+
+/* Class = "UILabel"; text = "Latest Version"; ObjectID = "7yV-by-nMd"; */
+"7yV-by-nMd.text" = "Latest Version";
+
+/* Class = "UILabel"; text = "1234567890"; ObjectID = "8xB-Ib-Pmq"; */
+"8xB-Ib-Pmq.text" = "N/A";
+
+/* Class = "UITableViewController"; title = "Device"; ObjectID = "9pv-A4-QxB"; */
+"9pv-A4-QxB.title" = "Device";
+
+/* Class = "UILabel"; text = "Manufacturer"; ObjectID = "Ch1-H4-Cbd"; */
+"Ch1-H4-Cbd.text" = "Manufacturer";
+
+/* Class = "UILabel"; text = "N/A"; ObjectID = "CyP-kV-qrO"; */
+"CyP-kV-qrO.text" = "N/A";
+
+/* Class = "UILabel"; text = "Model"; ObjectID = "DhT-Ds-Ql8"; */
+"DhT-Ds-Ql8.text" = "Model";
+
+/* Class = "UILabel"; text = "Status:"; ObjectID = "Djg-Lz-VRw"; */
+"Djg-Lz-VRw.text" = "Status:";
+
+/* Class = "UILabel"; text = "Cirrus Logic Headset"; ObjectID = "GX2-jI-v9t"; */
+"GX2-jI-v9t.text" = "N/A";
+
+/* Class = "UILabel"; text = "More details can be found by clicking on the link below."; ObjectID = "I8o-4F-N5H"; */
+"I8o-4F-N5H.text" = "More details can be found by clicking on the link below.";
+
+/* Class = "UILabel"; text = "N/A"; ObjectID = "JAg-WZ-mWu"; */
+"JAg-WZ-mWu.text" = "N/A";
+
+/* Class = "UITableViewController"; title = "About"; ObjectID = "JSZ-xd-q6H"; */
+"JSZ-xd-q6H.title" = "About";
+
+/* Class = "UILabel"; text = "Product"; ObjectID = "LRM-t7-q5n"; */
+"LRM-t7-q5n.text" = "Product";
+
+/* Class = "UILabel"; text = "HardwareVersion"; ObjectID = "PGy-fg-INy"; */
+"PGy-fg-INy.text" = "HardwareVersion";
+
+/* Class = "UILabel"; text = "N/A"; ObjectID = "R4L-S1-IWP"; */
+"R4L-S1-IWP.text" = "N/A";
+
+/* Class = "UITableViewSection"; headerTitle = "Firmware"; ObjectID = "VWO-16-q5g"; */
+"VWO-16-q5g.headerTitle" = "Firmware";
+
+/* Class = "UILabel"; text = "The MFi Headset Reference Design from Cirrus Logic is a rapid development platform for Lightning® connected headsets. It uses the CS42L42 codec to enable a Hi-Fi audio experience when listening to music, videos, or taking phone calls."; ObjectID = "Wah-2i-bnx"; */
+"Wah-2i-bnx.text" = "The MFi Headset Reference Design from Cirrus Logic is a rapid development platform for Lightning® connected headsets. It uses the CS42L42 codec to enable a Hi-Fi audio experience when listening to music, videos, or taking phone calls.";
+
+/* Class = "UILabel"; text = "Serial number"; ObjectID = "Yab-Si-GAS"; */
+"Yab-Si-GAS.text" = "Serial number";
+
+/* Class = "UITextView"; text = "http://www.cirrus.com"; ObjectID = "Z9a-pp-fcX"; */
+"Z9a-pp-fcX.text" = "http://www.cirrus.com";
+
+/* Class = "UITabBarItem"; title = "Device"; ObjectID = "acW-dT-cKf"; */
+"acW-dT-cKf.title" = "Device";
+
+/* Class = "UILabel"; text = "CS42L42"; ObjectID = "ade-50-oNp"; */
+"ade-50-oNp.text" = "N/A";
+
+/* Class = "UITabBarItem"; title = "About"; ObjectID = "eCl-Vp-nE1"; */
+"eCl-Vp-nE1.title" = "About";
+
+/* Class = "UITableViewSection"; headerTitle = "Hardware"; ObjectID = "nhC-Hg-hT8"; */
+"nhC-Hg-hT8.headerTitle" = "Hardware";
+
+/* Class = "UIButton"; normalTitle = "Update"; ObjectID = "vdo-zN-e8Z"; */
+"vdo-zN-e8Z.normalTitle" = "Update";
+
+/* Class = "UITableViewSection"; headerTitle = "CRD42L42 Reference Board"; ObjectID = "y8o-6w-gwC"; */
+"y8o-6w-gwC.headerTitle" = "CRD42L42 Reference Board";

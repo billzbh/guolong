@@ -1,0 +1,36 @@
+/* 
+  Localizable.strings
+  updateFirmware
+
+  Created by zbh on 16/4/28.
+  Copyright © 2016年 hxsmart. All rights reserved.
+*/
+
+"downloading"="正在下载hex文件...";
+"downloadOK"="hex文件下载完毕!";
+"startCommand"="发送指令以便启动设备的更新程序...";
+"updateOK"="固件升级成功";
+"updateFail"="固件升级失败";
+"updateFailbyTimeout"="收发数据超时";
+"Connected"="设备已连接";
+"Disconnected"="设备未连接";
+"startUpdate"="更新固件";
+"stopUpdate"="停止更新";
+"isStopUpdate"="是否停止更新？";
+"Upating"="上一次更新没结束";
+"UpatingTip2Next"="请等待更新完毕或者中止更新";
+
+"tranferData"="正在传输数据中...";
+"checkRemoteVersionFail"="查询远程版本错误";
+"CheckRomoteVersionOK"="查询远程服务器固件版本成功";
+"checkLocalVersionFail"="查询本地设备固件版本错误";
+"checkNetwork"="请检查网络连接或者稍后再试！";
+"makeSure"="确定";
+"cancelStop"="取消";
+"makeSureDeviceConnect"="请确定耳机设备已经连接！";
+"LocalHighthanRemote"="本地设备版本高于远程版本";
+"forceUpdateTip"="如需强制升级，请长按更新固件按钮";
+"ACKError"="升级程序应答错误";
+"LastACKError"="结束升级指令没有得到应答";
+"isCheckingRomoteVersion"="正在查询远程远程服务器版本...";
+"sendFinishCMD"="发送结束升级指令...";

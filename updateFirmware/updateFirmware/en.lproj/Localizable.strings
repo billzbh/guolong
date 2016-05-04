@@ -1,0 +1,37 @@
+/* 
+  Localizable.strings
+  updateFirmware
+
+  Created by zbh on 16/4/28.
+  Copyright © 2016年 hxsmart. All rights reserved.
+*/
+
+"downloading"="start download hex file...";
+"downloadOK"="download hexfile done!";
+"startCommand"="send command to start Device Update program ...";
+"updateOK"="update firmware success";
+"updateFail"="update firmware fail";
+"updateFailbyTimeout"="receive data timeout";
+"Connected"="Connected";
+"Disconnected"="Disconnected";
+"startUpdate"="Update";
+"stopUpdate"="Stop";
+"isStopUpdate"="are you want to stop update firmware ?";
+"Upating"="last update firmware hasn't complete yet";
+"UpatingTip2Next"="please wait for update firmware finish or stop update";
+
+"tranferData"="Tranfer data to device...";
+"checkRemoteVersionFail"="fail to check the remote verison";
+"CheckRomoteVersionOK"="check the remote verison success";
+"checkLocalVersionFail"="fail to check the local firmware verison";
+"checkNetwork"="please check the network and try again！";
+"makeSure"="OK";
+"cancelStop"="Cancel";
+"makeSureDeviceConnect"="please make sure the MIF device has connected";
+"LocalHighthanRemote"="Local version is higher than Remote Verison";
+"forceUpdateTip"="if you want to force update firmware,long press [Update] button";
+"ACKError"="ACK error";
+"LastACKError"="Has no ACK at the last one command";
+"isCheckingRomoteVersion"="Checking the Remote firmware Ver...";
+"sendFinishCMD"="sending finish update command...";
+
