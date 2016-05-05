@@ -333,26 +333,58 @@
                                             <rect key="frame" x="0.0" y="0.0" width="600" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <button opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3Ig-rL-EjV">
-                                                    <rect key="frame" x="411" y="0.0" width="133" height="44"/>
-                                                    <color key="backgroundColor" red="1" green="1" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                                    <state key="normal" title="测试按钮"/>
+                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="64" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" clearButtonMode="always" translatesAutoresizingMaskIntoConstraints="NO" id="zQn-At-5Xn">
+                                                    <rect key="frame" x="123" y="8" width="96" height="30"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="height" constant="30" id="GD8-ov-yb2"/>
+                                                        <constraint firstAttribute="width" constant="96" id="io6-Wz-6IW"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                                    <textInputTraits key="textInputTraits" keyboardType="numberPad" returnKeyType="done"/>
+                                                    <connections>
+                                                        <action selector="Done:" destination="9pv-A4-QxB" eventType="editingDidEndOnExit" id="lbz-bP-XE1"/>
+                                                    </connections>
+                                                </textField>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="MTU：" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="c8E-Dw-Uy0">
+                                                    <rect key="frame" x="26" y="12" width="73" height="21"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="73" id="NWC-hF-nhi"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <color key="textColor" red="1" green="1" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="3Ig-rL-EjV">
+                                                    <rect key="frame" x="243" y="8" width="133" height="30"/>
+                                                    <color key="backgroundColor" red="0.79466488486842102" green="0.23245140367002062" blue="0.033434416118420962" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="133" id="IcS-ug-8yy"/>
+                                                        <constraint firstAttribute="height" constant="30" id="kdC-co-nNX"/>
+                                                    </constraints>
+                                                    <inset key="contentEdgeInsets" minX="16" minY="8" maxX="16" maxY="8"/>
+                                                    <state key="normal" title="测试按钮">
+                                                        <color key="titleColor" red="1" green="1" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                    </state>
+                                                    <userDefinedRuntimeAttributes>
+                                                        <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
+                                                            <integer key="value" value="8"/>
+                                                        </userDefinedRuntimeAttribute>
+                                                    </userDefinedRuntimeAttributes>
                                                     <connections>
                                                         <action selector="Test:" destination="9pv-A4-QxB" eventType="touchUpInside" id="sFk-UV-9Df"/>
                                                     </connections>
                                                 </button>
-                                                <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="1000" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="zQn-At-5Xn">
-                                                    <rect key="frame" x="223" y="8" width="96" height="30"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                                    <textInputTraits key="textInputTraits"/>
-                                                </textField>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="包数：" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="c8E-Dw-Uy0">
-                                                    <rect key="frame" x="142" y="11" width="73" height="21"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
                                             </subviews>
+                                            <color key="backgroundColor" red="0.3865579791" green="0.54456722739999996" blue="0.2972249039" alpha="1" colorSpace="calibratedRGB"/>
+                                            <constraints>
+                                                <constraint firstItem="3Ig-rL-EjV" firstAttribute="leading" secondItem="zQn-At-5Xn" secondAttribute="trailing" constant="24" id="1ci-8x-spG"/>
+                                                <constraint firstItem="zQn-At-5Xn" firstAttribute="leading" secondItem="c8E-Dw-Uy0" secondAttribute="trailing" constant="24" id="7eR-4m-ZdE"/>
+                                                <constraint firstItem="c8E-Dw-Uy0" firstAttribute="top" secondItem="DkD-QQ-HsO" secondAttribute="topMargin" constant="4" id="DGk-AP-PYi"/>
+                                                <constraint firstAttribute="topMargin" secondItem="zQn-At-5Xn" secondAttribute="top" id="GPe-XE-6q3"/>
+                                                <constraint firstItem="3Ig-rL-EjV" firstAttribute="top" secondItem="DkD-QQ-HsO" secondAttribute="topMargin" id="OmV-Pk-wnH"/>
+                                                <constraint firstAttribute="bottomMargin" secondItem="c8E-Dw-Uy0" secondAttribute="bottom" constant="3" id="Qya-e8-k0g"/>
+                                                <constraint firstItem="c8E-Dw-Uy0" firstAttribute="leading" secondItem="DkD-QQ-HsO" secondAttribute="leadingMargin" constant="18" id="ye3-IH-2vU"/>
+                                            </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
                                 </cells>

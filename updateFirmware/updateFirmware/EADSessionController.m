@@ -180,7 +180,6 @@ NSString *EADSessionDataReceivedNotification = @"EADSessionDataReceivedNotificat
     [_dataLock unlock];
     
     [self _writeData];
-
 }
 
 // high level read method

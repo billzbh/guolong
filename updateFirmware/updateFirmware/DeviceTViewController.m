@@ -10,7 +10,8 @@
 //#define PROTOCOL_STRING_IMATE   @"com.imate.bluetooth"
 #define PROTOCOL_STRING_IMATE   @"com.insta360.guolong"
 #define DBNAME @"guolong.hex"
-#define SEND_MTU 12
+#define SEND_MTU 64
+#define TIMEOUT 20
 
 
 unsigned char gl_supportUpdateProtocol;
@@ -35,6 +36,7 @@ static volatile BOOL sg_isWorking = NO;
     BOOL isDownloading;
     volatile BOOL receivedCompleted;
     int allPackNum;
+    int customMTU;
 }
 
 @property (weak, nonatomic) IBOutlet UILabel *productName;
@@ -63,82 +65,103 @@ static volatile BOOL sg_isWorking = NO;
 
 @implementation DeviceTViewController
 
+
+-(IBAction)Done:(UITextField *)sender {
+    customMTU = (int)[[_packNameSet text] integerValue];
+}
+
 - (IBAction)Test:(UIButton *)sender {
     
-    allPackNum = (int)[[_packNameSet text] integerValue];
-    [_statusLog setText:@"等待请求包，20s"];
-    
+    customMTU = (int)[[_packNameSet text] integerValue];
+    [_statusLog setText:[NSString stringWithFormat:@"发送一包，MTU为:%d",customMTU]];
+   
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         
-        int iRet;
-//        Byte rece[100];
-//        
-//        int iRet = [_syncCommon SendRecv:[NSData dataWithBytes:"\x41\x42" length:2] ResponseDataBuf:rece timeout:5];
-//        if(iRet < 0) {
-//            //接收数据超时
-//            NSLog(@"接收数据超时");
-//            return;
-//        }
-//        
-//        NSData *xianshiDATA= [NSData dataWithBytes:rece length:iRet];
-//        dispatch_async(dispatch_get_main_queue(), ^{
-//            NSString *str = [NSString stringWithFormat:@"接收:%@",xianshiDATA];
-//            [_statusLog setText:str];
-//        });
-        
-        Byte dataBytes[12*allPackNum];
-        int num = 0;
+        unsigned char MTUsend[customMTU];
         Byte receiveBytes[50];
         
-        iRet = [self syncSendReceive:nil receivedBuff:receiveBytes timeout:20];
-        if(iRet<0)
-        {
+        
+        for (int i = 0; i < customMTU; i++) {
+            MTUsend[i]=i+1;
+        }
+        NSData* sendPackData =[self PackSendData:MTUsend length:customMTU PackNum:1];
+        NSLog(@"sendPackData= %@",sendPackData);
+        int iRet = [self syncSendReceive:sendPackData receivedBuff:receiveBytes timeout:5];
+        if(iRet < 0) {
+            //接收数据超时
             dispatch_async(dispatch_get_main_queue(), ^{
-                [_statusLog setText:@"20s等待请求包超时"];
+                [_statusLog setText:@"接收ACK 5s超时"];
             });
             return;
         }
-            
-        num = receiveBytes[3]*256+receiveBytes[4];
+        
+        NSString *str=[NSString stringWithFormat:@"%@",[NSData dataWithBytes:receiveBytes length:iRet]];
         dispatch_async(dispatch_get_main_queue(), ^{
-            NSString *str = [NSString stringWithFormat:@"接收ACK 包号：%d,",num];
             [_statusLog setText:str];
         });
-        
-        double timeSeconds = [self currentTimeSeconds];
-        
-        int UnsenddataLength=allPackNum*12;
-        while (1) {
-            int mlength = 12;
-            memset(receiveBytes, 0, 50);
-            memset(dataBytes+(num-1)*mlength, num, mlength);//每一包的内容刚好是包号
-            NSData* sendPackData =[self PackSendData:dataBytes+(num-1)*mlength length:mlength PackNum:num];
-            iRet = [self syncSendReceive:sendPackData receivedBuff:receiveBytes timeout:5];
-            if(iRet < 0) {
-                //接收数据超时
-                NSLog(@"接收数据超时");
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    [_statusLog setText:@"接收ACK 5s超时了"];
-                });
-                return;
-            }
-            
-            num = receiveBytes[3]*256+receiveBytes[4];
-            if ( num > (UnsenddataLength+mlength-1)/mlength ) {
-                
-                timeSeconds = [self currentTimeSeconds] - timeSeconds;
-                dispatch_async(dispatch_get_main_queue(), ^{
-                    NSString *str = [NSString stringWithFormat:@"包号：%d,需要发的包数目：%d,用时:%f s",num,(UnsenddataLength+mlength-1)/mlength,timeSeconds];
-                    [_statusLog setText:str];
-                });
-                break;
-            }
-            dispatch_async(dispatch_get_main_queue(), ^{
-                NSString *str = [NSString stringWithFormat:@"接收ACK 包号：%d,",num];
-                [_statusLog setText:str];
-            });
-        }
     });
+
+    
+
+//    allPackNum = (int)[[_packNameSet text] integerValue];
+//    [_statusLog setText:@"等待请求包，20s"];
+//    
+//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+//        
+//        int iRet;
+//        Byte dataBytes[12*allPackNum];
+//        int num = 0;
+//        Byte receiveBytes[50];
+//        
+//        iRet = [self syncSendReceive:nil receivedBuff:receiveBytes timeout:20];
+//        if(iRet<0)
+//        {
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                [_statusLog setText:@"20s等待请求包超时"];
+//            });
+//            return;
+//        }
+//            
+//        num = receiveBytes[3]*256+receiveBytes[4];
+//        dispatch_async(dispatch_get_main_queue(), ^{
+//            NSString *str = [NSString stringWithFormat:@"接收ACK 包号：%d,",num];
+//            [_statusLog setText:str];
+//        });
+//        
+//        double timeSeconds = [self currentTimeSeconds];
+//        
+//        int UnsenddataLength=allPackNum*12;
+//        while (1) {
+//            int mlength = 12;
+//            memset(receiveBytes, 0, 50);
+//            memset(dataBytes+(num-1)*mlength, num, mlength);//每一包的内容刚好是包号
+//            NSData* sendPackData =[self PackSendData:dataBytes+(num-1)*mlength length:mlength PackNum:num];
+//            iRet = [self syncSendReceive:sendPackData receivedBuff:receiveBytes timeout:5];
+//            if(iRet < 0) {
+//                //接收数据超时
+//                NSLog(@"接收数据超时");
+//                dispatch_async(dispatch_get_main_queue(), ^{
+//                    [_statusLog setText:@"接收ACK 5s超时了"];
+//                });
+//                return;
+//            }
+//            
+//            num = receiveBytes[3]*256+receiveBytes[4];
+//            if ( num > (UnsenddataLength+mlength-1)/mlength ) {
+//                
+//                timeSeconds = [self currentTimeSeconds] - timeSeconds;
+//                dispatch_async(dispatch_get_main_queue(), ^{
+//                    NSString *str = [NSString stringWithFormat:@"包号：%d,需要发的包数目：%d,用时:%f s",num,(UnsenddataLength+mlength-1)/mlength,timeSeconds];
+//                    [_statusLog setText:str];
+//                });
+//                break;
+//            }
+//            dispatch_async(dispatch_get_main_queue(), ^{
+//                NSString *str = [NSString stringWithFormat:@"接收ACK 包号：%d,",num];
+//                [_statusLog setText:str];
+//            });
+//        }
+//    });
 }
 
 
@@ -159,15 +182,6 @@ static volatile BOOL sg_isWorking = NO;
         if (RVersion==nil) {
             //查询远程远程服务器版本
             [self check2Update];
-            
-            //弹窗：请看到远程版本号后再操作！
-            ZBHAlertViewController *alertView = [[ZBHAlertViewController alloc] initWithTitle:NSLocalizedString(@"checkRemoteVersionFail", nil) message:NSLocalizedString(@"checkNetwork", nil) viewController:self];
-            
-            RIButtonItem *okItem = [RIButtonItem itemWithLabel:NSLocalizedString(@"makeSure", nil) action:^{
-                
-            }];
-            [alertView addButton:okItem type:RIButtonItemType_Destructive];
-            [alertView show];
             return;
         }
         
@@ -240,6 +254,7 @@ static volatile BOOL sg_isWorking = NO;
 
 -(void)updateFirmwareFileInApp
 {
+    customMTU = (int)[[_packNameSet text] integerValue];
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         if (isUpdating==YES) {
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -264,16 +279,17 @@ static volatile BOOL sg_isWorking = NO;
         Byte *sendData = (Byte*)[hexData bytes];
         
     
-        int packnum=0;
+        int packnum=1;
         dispatch_async(dispatch_get_main_queue(), ^{
             [_statusLog setText:NSLocalizedString(@"startCommand", nil)];
         });
         
+        int iRet,retCode;
         Byte receiveBytes[50];
         Byte sendBytes[2];
         sendBytes[0]=0x41;
         sendBytes[1]=0x42;
-        int iRet = [self syncSendReceive:[NSData dataWithBytes:sendBytes length:2] receivedBuff:receiveBytes timeout:5];
+        iRet = [self syncSendReceive:[NSData dataWithBytes:sendBytes length:2] receivedBuff:receiveBytes timeout:TIMEOUT];
 
         if(iRet < 0) {
             //接收数据超时
@@ -294,7 +310,7 @@ static volatile BOOL sg_isWorking = NO;
             return;
         }
         
-        int retCode = receiveBytes[2];
+        retCode = receiveBytes[2];
         if (retCode != 0x03) {
             //启动升级程序失败
             NSLog(@"启动升级程序失败");
@@ -316,33 +332,34 @@ static volatile BOOL sg_isWorking = NO;
         //获取第一个包号
         packnum = receiveBytes[3]*256+receiveBytes[4];
         //开始发送数据：
-        Byte dataBytes[SEND_MTU];
-        int sendLength=SEND_MTU;
+        Byte dataBytes[customMTU];
+        int sendLength=customMTU;
         int UnsenddataLength=(int)[hexData length];
         
         while (1) {
 
             dispatch_async(dispatch_get_main_queue(), ^{
-                NSString *str = [NSString stringWithFormat:@"%@ [进度:%%%d]",NSLocalizedString(@"tranferData", nil),(int)((float)((packnum-1)*SEND_MTU)/(float)UnsenddataLength*100)];
+                NSString *str = [NSString stringWithFormat:@"%@ [进度:%%%d]",NSLocalizedString(@"tranferData", nil),(int)((float)((packnum-1)*customMTU)/(float)UnsenddataLength*100)];
                 [_statusLog setText:str];
             });
             
-            if (packnum == (UnsenddataLength+SEND_MTU-1)/SEND_MTU) {
-                sendLength = UnsenddataLength-(packnum-1)*SEND_MTU;
-                memset(dataBytes, 0xFF, SEND_MTU);
-                memcpy(dataBytes, sendData+(packnum-1)*SEND_MTU, sendLength);
+            if (packnum == (UnsenddataLength+customMTU-1)/customMTU) {
+                sendLength = UnsenddataLength-(packnum-1)*customMTU;
+                memset(dataBytes, 0xFF, customMTU);
+                memcpy(dataBytes, sendData+(packnum-1)*customMTU, sendLength);
             }else
-                memcpy(dataBytes, sendData+(packnum-1)*SEND_MTU, SEND_MTU);
+                memcpy(dataBytes, sendData+(packnum-1)*customMTU, customMTU);
             
             memset(receiveBytes, 0, 50);
-            NSData* sendPackData =[self PackSendData:dataBytes length:SEND_MTU PackNum:packnum];
-            iRet = [self syncSendReceive:sendPackData receivedBuff:receiveBytes timeout:5];
+            NSData* sendPackData =[self PackSendData:dataBytes length:customMTU PackNum:packnum];
+            iRet = [self syncSendReceive:sendPackData receivedBuff:receiveBytes timeout:TIMEOUT];
             if(iRet < 0) {
                 //接收数据超时
                 NSLog(@"接收数据超时");
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [_statusLog setText:@"接收ACK 5s超时了"];
                 });
+                isUpdating = NO;
                 return;
             }
             
@@ -367,7 +384,7 @@ static volatile BOOL sg_isWorking = NO;
             
             
             packnum = receiveBytes[3]*256+receiveBytes[4];
-            if ( packnum > (UnsenddataLength+SEND_MTU-1)/SEND_MTU ) {
+            if ( packnum > (UnsenddataLength+customMTU-1)/customMTU ) {
                 break;
             }
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -382,7 +399,7 @@ static volatile BOOL sg_isWorking = NO;
         });
         
         memset(receiveBytes, 0, 50);
-        iRet = [self syncSendReceive:[self packFinishData] receivedBuff:receiveBytes timeout:60];
+        iRet = [self syncSendReceive:[self packFinishData] receivedBuff:receiveBytes timeout:TIMEOUT];
         if (iRet<0) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 [_statusLog setText:NSLocalizedString(@"stopUpdate", nil)];
@@ -429,7 +446,7 @@ static volatile BOOL sg_isWorking = NO;
 
 -(void)updateFirmware
 {
-    
+    customMTU = (int)[[_packNameSet text] integerValue];
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         
         isUpdating = YES;
@@ -447,7 +464,7 @@ static volatile BOOL sg_isWorking = NO;
         Byte sendBytes[2];
         sendBytes[0]=0x41;
         sendBytes[1]=0x42;
-        int iRet = [self syncSendReceive:[NSData dataWithBytes:sendBytes length:2] receivedBuff:receiveBytes timeout:5];
+        int iRet = [self syncSendReceive:[NSData dataWithBytes:sendBytes length:2] receivedBuff:receiveBytes timeout:TIMEOUT];
         
         if(iRet < 0) {
             //接收数据超时
@@ -490,33 +507,34 @@ static volatile BOOL sg_isWorking = NO;
         //获取第一个包号
         packnum = receiveBytes[3]*256+receiveBytes[4];
         //开始发送数据：
-        Byte dataBytes[SEND_MTU];
-        int sendLength=SEND_MTU;
+        Byte dataBytes[customMTU];
+        int sendLength=customMTU;
         int UnsenddataLength=(int)[hexData length];
         
         while (1) {
             
             dispatch_async(dispatch_get_main_queue(), ^{
-                NSString *str = [NSString stringWithFormat:@"%@ [进度:%%%d]",NSLocalizedString(@"tranferData", nil),(int)((float)((packnum-1)*SEND_MTU)/(float)UnsenddataLength*100)];
+                NSString *str = [NSString stringWithFormat:@"%@ [进度:%%%d]",NSLocalizedString(@"tranferData", nil),(int)((float)((packnum-1)*customMTU)/(float)UnsenddataLength*100)];
                 [_statusLog setText:str];
             });
             
-            if (packnum == (UnsenddataLength+SEND_MTU-1)/SEND_MTU) {
-                sendLength = UnsenddataLength-(packnum-1)*SEND_MTU;
-                memset(dataBytes, 0xFF, SEND_MTU);
-                memcpy(dataBytes, sendData+(packnum-1)*SEND_MTU, sendLength);
+            if (packnum == (UnsenddataLength+customMTU-1)/customMTU) {
+                sendLength = UnsenddataLength-(packnum-1)*customMTU;
+                memset(dataBytes, 0xFF, customMTU);
+                memcpy(dataBytes, sendData+(packnum-1)*customMTU, sendLength);
             }else
-                memcpy(dataBytes, sendData+(packnum-1)*SEND_MTU, SEND_MTU);
+                memcpy(dataBytes, sendData+(packnum-1)*customMTU, customMTU);
             
             memset(receiveBytes, 0, 50);
-            NSData* sendPackData =[self PackSendData:dataBytes length:SEND_MTU PackNum:packnum];
-            iRet = [self syncSendReceive:sendPackData receivedBuff:receiveBytes timeout:5];
+            NSData* sendPackData =[self PackSendData:dataBytes length:customMTU PackNum:packnum];
+            iRet = [self syncSendReceive:sendPackData receivedBuff:receiveBytes timeout:TIMEOUT];
             if(iRet < 0) {
                 //接收数据超时
                 NSLog(@"接收数据超时");
                 dispatch_async(dispatch_get_main_queue(), ^{
                     [_statusLog setText:@"接收ACK 5s超时了"];
                 });
+                isUpdating = NO;
                 return;
             }
             
@@ -538,7 +556,7 @@ static volatile BOOL sg_isWorking = NO;
                 return;
             }
             packnum = receiveBytes[3]*256+receiveBytes[4];
-            if ( packnum > (UnsenddataLength+SEND_MTU-1)/SEND_MTU ) {
+            if ( packnum > (UnsenddataLength+customMTU-1)/customMTU ) {
                 break;
             }
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -553,7 +571,7 @@ static volatile BOOL sg_isWorking = NO;
         });
         
         memset(receiveBytes, 0, 50);
-        iRet = [self syncSendReceive:[self packFinishData] receivedBuff:receiveBytes timeout:60];
+        iRet = [self syncSendReceive:[self packFinishData] receivedBuff:receiveBytes timeout:TIMEOUT];
         if (iRet<0) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 [_statusLog setText:NSLocalizedString(@"stopUpdate", nil)];
@@ -698,6 +716,16 @@ static volatile BOOL sg_isWorking = NO;
     [bquery getObjectInBackgroundWithId:@"LXjr666H" block:^(BmobObject *object,NSError *error){
         if (error){
             //进行错误处理
+            
+            //弹窗：请看到远程版本号后再操作！
+            ZBHAlertViewController *alertView = [[ZBHAlertViewController alloc] initWithTitle:NSLocalizedString(@"checkRemoteVersionFail", nil) message:NSLocalizedString(@"checkNetwork", nil) viewController:self];
+            
+            RIButtonItem *okItem = [RIButtonItem itemWithLabel:NSLocalizedString(@"makeSure", nil) action:^{
+                [_statusLog setText:NSLocalizedString(@"checkRemoteVersionFail", nil)];
+            }];
+            [alertView addButton:okItem type:RIButtonItemType_Destructive];
+            [alertView show];
+            
         }else{
             //表里有id为LXjr666H的数据
             if (object) {
