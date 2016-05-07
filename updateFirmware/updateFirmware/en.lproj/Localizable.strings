@@ -22,6 +22,8 @@
 
 "tranferData"="Tranfer data to device...";
 "checkRemoteVersionFail"="fail to check the remote verison";
+"RemoteVersionIsNil"="remote firmware version didn't exist";
+"clickAgain"="please wait for a moment to click again";
 "CheckRomoteVersionOK"="check the remote verison success";
 "checkLocalVersionFail"="fail to check the local firmware verison";
 "checkNetwork"="please check the network and try again！";

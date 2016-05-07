@@ -22,6 +22,8 @@
 
 "tranferData"="正在传输数据中...";
 "checkRemoteVersionFail"="查询远程版本错误";
+"RemoteVersionIsNil"="远程版本号不存在";
+"clickAgain"="请稍后再次点击";
 "CheckRomoteVersionOK"="查询远程服务器固件版本成功";
 "checkLocalVersionFail"="查询本地设备固件版本错误";
 "checkNetwork"="请检查网络连接或者稍后再试！";

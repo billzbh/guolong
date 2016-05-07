@@ -10,8 +10,8 @@
 //#define PROTOCOL_STRING_IMATE   @"com.imate.bluetooth"
 #define PROTOCOL_STRING_IMATE   @"com.insta360.guolong"
 #define DBNAME @"guolong.hex"
-#define SEND_MTU 64
-#define TIMEOUT 20
+#define SEND_MTU 32
+#define TIMEOUT 5
 
 
 unsigned char gl_supportUpdateProtocol;
@@ -176,85 +176,61 @@ static volatile BOOL sg_isWorking = NO;
 
 - (IBAction)updateAction {
     
-    if ([_updateFirware tag]==0) {//正在开始更新
         
+    [self setButtonEnable:NO];
+    if (RVersion==nil) {
+        //查询远程远程服务器版本
+        [self check2Update];
+        ZBHAlertViewController *alertView = [[ZBHAlertViewController alloc] initWithTitle:NSLocalizedString(@"RemoteVersionIsNil", nil) message:NSLocalizedString(@"clickAgain", nil) viewController:self];
         
-        if (RVersion==nil) {
-            //查询远程远程服务器版本
-            [self check2Update];
-            return;
-        }
-        
-        [_updateFirware setTag:1];
-        [_updateFirware setBackgroundColor:[UIColor grayColor]];
-        [_updateFirware setTitle:NSLocalizedString(@"stopUpdate", nil) forState:UIControlStateNormal];
-        
-        //判断是否需要下载固件
-        if([RVersion floatValue] > [Lversion floatValue]&& isDownloading == NO)
-        {
-            [self DownloadHexFile];
-        }
-        //比较版本号。如果没有设备版本号或者远程版本 <= 设备版本号，直接return并弹出警告。
-        if(DVersion==nil)
-        {
-            //弹出框提示读不到设备号，不能升级。
-            [_updateFirware setTag:0];
-            [_updateFirware setBackgroundColor:[UIColor redColor]];
-            [_updateFirware setTitle:NSLocalizedString(@"startUpdate", nil) forState:UIControlStateNormal];
-            isUpdating = NO;
-            
-            ZBHAlertViewController *alertView = [[ZBHAlertViewController alloc] initWithTitle:NSLocalizedString(@"checkLocalVersionFail", nil) message:NSLocalizedString(@"makeSureDeviceConnect", nil) viewController:self];
-            
-            RIButtonItem *okItem = [RIButtonItem itemWithLabel:NSLocalizedString(@"makeSure", nil) action:^{
-                
-            }];
-            [alertView addButton:okItem type:RIButtonItemType_Destructive];
-            [alertView show];
-            return;
-        }
-
-        if([DVersion floatValue] >= [RVersion floatValue])
-        {
-            //弹出框，提示本地版本高于远程的版本。如果需要强制升级，请长按
-            [_updateFirware setTag:0];
-            [_updateFirware setBackgroundColor:[UIColor redColor]];
-            [_updateFirware setTitle:NSLocalizedString(@"startUpdate", nil) forState:UIControlStateNormal];
-            isUpdating = NO;
-            
-            ZBHAlertViewController *alertView = [[ZBHAlertViewController alloc] initWithTitle:NSLocalizedString(@"LocalHighthanRemote", nil) message:NSLocalizedString(@"forceUpdateTip", nil) viewController:self];
-            
-            RIButtonItem *okItem = [RIButtonItem itemWithLabel:NSLocalizedString(@"makeSure", nil) action:^{
-                
-            }];
-            [alertView addButton:okItem type:RIButtonItemType_Destructive];
-            [alertView show];
-            return;
-        }
-        
-        [self updateFirmware];
-        
-    }else{//停止更新
-        
-        ZBHAlertViewController *alertView = [[ZBHAlertViewController alloc] initWithTitle:NSLocalizedString(@"isStopUpdate", nil) message:@"" viewController:self];
-        
-        RIButtonItem *cancelItem = [RIButtonItem itemWithLabel:NSLocalizedString(@"cancelStop", nil)];
-        [alertView addButton:cancelItem type:RIButtonItemType_Cancel];
         RIButtonItem *okItem = [RIButtonItem itemWithLabel:NSLocalizedString(@"makeSure", nil) action:^{
-            [_updateFirware setTag:0];
-            [_updateFirware setBackgroundColor:[UIColor redColor]];
-            [_updateFirware setTitle:NSLocalizedString(@"startUpdate", nil) forState:UIControlStateNormal];
-            [_statusLog setText:NSLocalizedString(@"stopUpdate", nil)];
+            
+        }];
+        [alertView addButton:okItem type:RIButtonItemType_Destructive];
+        [alertView show];
+        return;
+    }
+    
+    //比较版本号。如果没有设备版本号或者远程版本 <= 设备版本号，直接return并弹出警告。
+    if(DVersion==nil)
+    {
+        //弹出框提示读不到设备号，不能升级。
+        ZBHAlertViewController *alertView = [[ZBHAlertViewController alloc] initWithTitle:NSLocalizedString(@"checkLocalVersionFail", nil) message:NSLocalizedString(@"makeSureDeviceConnect", nil) viewController:self];
+        
+        RIButtonItem *okItem = [RIButtonItem itemWithLabel:NSLocalizedString(@"makeSure", nil) action:^{
+            [self setButtonEnable:YES];
             isUpdating = NO;
         }];
         [alertView addButton:okItem type:RIButtonItemType_Destructive];
         [alertView show];
+        return;
     }
+
+    if([DVersion floatValue] >= [RVersion floatValue])
+    {
+        //弹出框，提示本地版本高于远程的版本。如果需要强制升级，请长按
+        ZBHAlertViewController *alertView = [[ZBHAlertViewController alloc] initWithTitle:NSLocalizedString(@"LocalHighthanRemote", nil) message:NSLocalizedString(@"forceUpdateTip", nil) viewController:self];
+        
+        RIButtonItem *okItem = [RIButtonItem itemWithLabel:NSLocalizedString(@"makeSure", nil) action:^{
+            [self setButtonEnable:YES];
+            isUpdating = NO;
+        }];
+        [alertView addButton:okItem type:RIButtonItemType_Destructive];
+        [alertView show];
+        return;
+    }
+    
+    [self updateFirmware];
 }
 
 
 -(void)updateFirmwareFileInApp
 {
     customMTU = (int)[[_packNameSet text] integerValue];
+#ifndef DEBUG
+    customMTU = SEND_MTU;
+#endif
+    
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         if (isUpdating==YES) {
             dispatch_async(dispatch_get_main_queue(), ^{
@@ -273,9 +249,14 @@ static volatile BOOL sg_isWorking = NO;
         isUpdating = YES;
         
         //读取文件
-        NSString *bundlePath = [[NSBundle mainBundle].resourcePath stringByAppendingPathComponent:@"guolong.bundle"];
-        NSBundle *bundle = [NSBundle bundleWithPath:bundlePath];
-        NSData* hexData = [NSData dataWithContentsOfFile:[bundle pathForResource:@"UART" ofType:@"bin"]];
+        //1. 先读取本地下载的文件
+        NSData* hexData = [NSData dataWithContentsOfFile:[self saveFilePath:DBNAME]];
+        if(hexData==nil)//为nil则从app本地资源读取。
+        {
+            NSString *bundlePath = [[NSBundle mainBundle].resourcePath stringByAppendingPathComponent:@"guolong.bundle"];
+            NSBundle *bundle = [NSBundle bundleWithPath:bundlePath];
+            hexData = [NSData dataWithContentsOfFile:[bundle pathForResource:@"UART" ofType:@"bin"]];
+        }
         Byte *sendData = (Byte*)[hexData bytes];
         
     
@@ -332,6 +313,7 @@ static volatile BOOL sg_isWorking = NO;
         //获取第一个包号
         packnum = receiveBytes[3]*256+receiveBytes[4];
         //开始发送数据：
+        
         Byte dataBytes[customMTU];
         int sendLength=customMTU;
         int UnsenddataLength=(int)[hexData length];
@@ -399,7 +381,7 @@ static volatile BOOL sg_isWorking = NO;
         });
         
         memset(receiveBytes, 0, 50);
-        iRet = [self syncSendReceive:[self packFinishData] receivedBuff:receiveBytes timeout:TIMEOUT];
+        iRet = [self syncSendReceive:[self packFinishData] receivedBuff:receiveBytes timeout:20];
         if (iRet<0) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 [_statusLog setText:NSLocalizedString(@"stopUpdate", nil)];
@@ -447,6 +429,9 @@ static volatile BOOL sg_isWorking = NO;
 -(void)updateFirmware
 {
     customMTU = (int)[[_packNameSet text] integerValue];
+#ifndef DEBUG
+    customMTU = SEND_MTU;
+#endif
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         
         isUpdating = YES;
@@ -474,14 +459,12 @@ static volatile BOOL sg_isWorking = NO;
                 ZBHAlertViewController *alertView = [[ZBHAlertViewController alloc] initWithTitle:NSLocalizedString(@"updateFailbyTimeout", nil) message:NSLocalizedString(@"stopUpdate", nil) viewController:self];
                 
                 RIButtonItem *okItem = [RIButtonItem itemWithLabel:NSLocalizedString(@"makeSure", nil) action:^{
-                    
+                    isUpdating = NO;
+                    [self setButtonEnable:YES];
                 }];
                 [alertView addButton:okItem type:RIButtonItemType_Destructive];
                 [alertView show];
             });
-            
-            
-            isUpdating = NO;
             return;
         }
         
@@ -495,12 +478,13 @@ static volatile BOOL sg_isWorking = NO;
                 
                 RIButtonItem *okItem = [RIButtonItem itemWithLabel:NSLocalizedString(@"makeSure", nil) action:^{
                     
+                    isUpdating = NO;
+                    [self setButtonEnable:YES];
+                    
                 }];
                 [alertView addButton:okItem type:RIButtonItemType_Destructive];
                 [alertView show];
             });
-            
-            isUpdating = NO;
             return;
         }
         
@@ -535,6 +519,7 @@ static volatile BOOL sg_isWorking = NO;
                     [_statusLog setText:@"接收ACK 5s超时了"];
                 });
                 isUpdating = NO;
+                [self setButtonEnable:YES];
                 return;
             }
             
@@ -546,13 +531,12 @@ static volatile BOOL sg_isWorking = NO;
                     ZBHAlertViewController *alertView = [[ZBHAlertViewController alloc] initWithTitle:NSLocalizedString(@"ACKError", nil) message:NSLocalizedString(@"stopUpdate", nil) viewController:self];
                     
                     RIButtonItem *okItem = [RIButtonItem itemWithLabel:NSLocalizedString(@"makeSure", nil) action:^{
-                        
+                        isUpdating = NO;
+                        [self setButtonEnable:YES];
                     }];
                     [alertView addButton:okItem type:RIButtonItemType_Destructive];
                     [alertView show];
                 });
-                
-                isUpdating = NO;
                 return;
             }
             packnum = receiveBytes[3]*256+receiveBytes[4];
@@ -571,19 +555,21 @@ static volatile BOOL sg_isWorking = NO;
         });
         
         memset(receiveBytes, 0, 50);
-        iRet = [self syncSendReceive:[self packFinishData] receivedBuff:receiveBytes timeout:TIMEOUT];
+        iRet = [self syncSendReceive:[self packFinishData] receivedBuff:receiveBytes timeout:20];
         if (iRet<0) {
             dispatch_async(dispatch_get_main_queue(), ^{
                 [_statusLog setText:NSLocalizedString(@"stopUpdate", nil)];
                 ZBHAlertViewController *alertView = [[ZBHAlertViewController alloc] initWithTitle:NSLocalizedString(@"updateFailbyTimeout", nil) message:NSLocalizedString(@"LastACKError", nil) viewController:self];
                 RIButtonItem *okItem = [RIButtonItem itemWithLabel:NSLocalizedString(@"makeSure", nil) action:^{
                     
+                    isUpdating = NO;
+                    [self setButtonEnable:YES];
+                    
                 }];
                 [alertView addButton:okItem type:RIButtonItemType_Destructive];
                 [alertView show];
             });
             
-            isUpdating = NO;
             return ;
         }
         
@@ -613,12 +599,15 @@ static volatile BOOL sg_isWorking = NO;
             });
         }
         isUpdating = NO;
+        [self setButtonEnable:YES];
     });
-    
  }
 
 -(BOOL)DownloadHexFile
 {
+    if (isDownloading==YES) {
+        return NO;
+    }
     [_statusLog setText:NSLocalizedString(@"downloading", nil)];
     isDownloading = YES;
     
@@ -652,12 +641,6 @@ static volatile BOOL sg_isWorking = NO;
     //可能需要停止更新固件
 }
 
--(void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-    if(RVersion==nil)
-        [self check2Update];
-}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -744,6 +727,8 @@ static volatile BOOL sg_isWorking = NO;
                 }
             }
         }
+        [self setButtonEnable:YES];
+        
     }];
 }
 
@@ -1051,6 +1036,21 @@ static volatile BOOL sg_isWorking = NO;
 {
     NSTimeInterval time= [[NSDate date] timeIntervalSince1970];
     return (double)time;
+}
+
+
+-(void)setButtonEnable:(BOOL)enable
+{
+    if (enable) {
+        [_updateFirware setEnabled:YES];
+        [_updateFirware setBackgroundColor:[UIColor redColor]];
+        [_updateFirware setTitle:NSLocalizedString(@"startUpdate", nil) forState:UIControlStateNormal];
+        
+    }else{
+        [_updateFirware setEnabled:NO];
+        [_updateFirware setBackgroundColor:[UIColor grayColor]];
+        [_updateFirware setTitle:NSLocalizedString(@"stopUpdate", nil) forState:UIControlStateNormal];
+    }
 }
 
 

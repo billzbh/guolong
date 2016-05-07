@@ -27,7 +27,7 @@
 "DhT-Ds-Ql8.text" = "型号";
 
 /* Class = "UILabel"; text = "Status:"; ObjectID = "Djg-Lz-VRw"; */
-"Djg-Lz-VRw.text" = "状态:";
+"Djg-Lz-VRw.text" = "日志:";
 
 /* Class = "UILabel"; text = "Cirrus Logic Headset"; ObjectID = "GX2-jI-v9t"; */
 "GX2-jI-v9t.text" = "N/A";
