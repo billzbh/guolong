@@ -15,8 +15,10 @@
 
 
 unsigned char gl_supportUpdateProtocol;
-#import <AudioToolbox/AudioToolbox.h>
+
 #import <UIKit/UIKit.h>
+#import <Foundation/Foundation.h>
+#import <AudioToolbox/AudioServices.h>
 #import "DeviceTViewController.h"
 #import "EADSessionController.h"
 #import <BmobSDK/Bmob.h>
