@@ -9,8 +9,8 @@
 "downloading"="start download hex file...";
 "downloadOK"="download hexfile done!";
 "startCommand"="send command to start Device Update program ...";
-"updateOK"="update firmware success";
-"updateFail"="update firmware fail";
+"updateOK"="send firmware'data success";
+"updateFail"="send firmware'data fail";
 "updateFailbyTimeout"="receive data timeout";
 "Connected"="Connected";
 "Disconnected"="Disconnected";
@@ -35,5 +35,6 @@
 "ACKError"="ACK error";
 "LastACKError"="Has no ACK at the last one command";
 "isCheckingRomoteVersion"="Checking the Remote firmware Ver...";
-"sendFinishCMD"="sending finish update command...";
-
+"sendFinishCMD"="sending data-transfer finish command...";
+"waitForUpdate"="please wait for firmware update";
+"firmwareFINSH"="firmware update success";

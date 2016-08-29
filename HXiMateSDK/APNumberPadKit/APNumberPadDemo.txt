@@ -1,0 +1,77 @@
+//
+//  ViewController.m
+//  APNumberPad_Demo
+//
+//  Created by srj on 15/4/23.
+//  Copyright (c) 2015年 srj. All rights reserved.
+//
+
+#import "ViewController.h"
+#import "APNumberPadKit/APNumberPad.h"
+
+@interface ViewController ()<UITextFieldDelegate,APNumberPadDelegate>
+
+@property (weak, nonatomic) IBOutlet UITextField *textFieldNormal;
+
+@property (weak, nonatomic) IBOutlet UITextField *textField;
+
+@end
+
+@implementation ViewController
+
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.textFieldNormal.delegate = self;
+    self.textField.delegate = self;
+    
+    self.textFieldNormal.tag = 10;
+    self.textField.tag = 11;
+}
+
+-(BOOL)textFieldShouldBeginEditing:(UITextField *)textField
+{
+    if (textField.tag == 11) {
+        /**
+         *  定义一个APNumberPad,让该View作为textField的inputView
+         */
+        APNumberPad *numberPad = [APNumberPad numberPadWithDelegate:self];
+        
+        /**
+         *  如果输入pinblock，需要设置isEncryptInput = YES，数据从numberPad:functionButtonAction:pinBlock:获取
+         *  如果输入明文，需要设置isEncryptInput = NO，数据从numberPad:functionButtonAction:textInput:获取
+         *
+         */
+        numberPad.isEncryptInput = YES;
+        
+        /**
+         *  如果isEncryptInput = YES，需要设置以下参数
+         */
+        [numberPad encryptParameterConfig:@"7F9D5E189091ED021714A182F454F5F3" masterKeyDivData:@"ABCDEF-0123456789-FEDCBA" cardNumber:@"1234567890123456"];
+        
+        [numberPad.leftFunctionButton setTitle:@"完成" forState:UIControlStateNormal];
+        numberPad.titleLab.text = NSLocalizedString(@"银行安全输入", nil);
+        
+        textField.inputView = numberPad;
+    }
+    
+    return YES;
+}
+
+-(void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+    [self.textField resignFirstResponder];
+}
+
+- (void)numberPad:(APNumberPad *)numberPad functionButtonAction:(UIButton *)functionButton textInput:(NSString *)textInput{
+    //点击左边确认按钮(functionButton)要做的事 textInput为所编辑对象
+    
+    NSLog(@"textInput:%@", textInput);
+    [self.textField resignFirstResponder];
+}
+
+- (void)numberPad:(APNumberPad *)numberPad functionButtonAction:(UIButton *)functionButton pinBlock:(NSString *)pinBlock {
+    //点击左边确认按钮(functionButton)要做的事 textInput为所编辑对象
+    
+    NSLog(@"pinBlock:%@", pinBlock);
+    [self.textField resignFirstResponder];
+}
+@end

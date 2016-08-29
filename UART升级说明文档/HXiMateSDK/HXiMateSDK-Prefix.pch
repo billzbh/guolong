@@ -1,0 +1,9 @@
+//
+// Prefix header for all source files of the 'HXiMateSDK' target in the 'HXiMateSDK' project
+//
+
+#ifdef __OBJC__
+    #import <Foundation/Foundation.h>
+#endif
+
+#define __FOR_IOS__

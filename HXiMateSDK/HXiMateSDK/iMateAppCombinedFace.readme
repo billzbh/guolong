@@ -1,0 +1,77 @@
+
+
+- (void)iMateDelegateCombinedFaceResponse:(int)returnCode
+                              respondData:(NSDictionary *)respondDictionary
+                                    error:(NSString *)error;
+                                    
+respondDictionary参数说明：
+当 returnCode == 0, respondDictionary非空，并且有内容，内容如下：
+
+requestType               key                            value type   note
+-------------------------------------------------------------------------------------------------
+kProcessTypeSwipeCard     kSwipeCard_Track2String      NSString     磁条卡二磁道数据
+kProcessTypeSwipeCard     kSwipeCard_Track3String      NSString     磁条卡三磁道数据
+-------------------------------------------------------------------------------------------------
+kProcessTypeReadIdCard    kReadIdCard_InfoData         NSData       二代证信息原始数据
+kProcessTypeReadIdCard    kReadIdCard_InfoArray        NSArray      二代证信息解码分拆数据
+kProcessTypeReadIdCard    kReadIdCard_PhotoData        NSData       二代证信息照片原始数据
+kProcessTypeReadIdCard    kReadIdCard_PhotoImage       UIImage      二代证信息照片解码图像
+-------------------------------------------------------------------------------------------------
+kProcessTypeBatteryLevel  kBatteryLevel_LevelString    NSString     电池电量，"000"~"100"
+-------------------------------------------------------------------------------------------------
+kProcessTypeXMemRead      kXMemRead_XMemeData          NSData       读扩展内存的数据内容
+-------------------------------------------------------------------------------------------------
+kProcessTypeXMemWrite     -                              -            写扩展内存，无返回数据
+
+=================================================================================================
+kProcessTypePrinterStatus kPrinterStatus_StatusString  NSString      打印机状态:
+                                                                        @"ok"            正常
+                                                                        @"connected"     已连接
+                                                                        @"disconnected"  未连接
+                                                                        @"out_of_paper"  缺纸
+                                                                        @"offline"       离线
+
+=================================================================================================
+kProcessTypePbocIcInfo    kPbocIc_ResetAtrData         NSData       PBOC卡复位数据
+kProcessTypePbocIcInfo    kPbocIc_CardInfoArray        NSArray      PBOC卡信息数据,NSString数组
+-------------------------------------------------------------------------------------------------
+kProcessTypePbocIcLog     kPbocIc_ResetAtrData         NSData       PBOC卡复位数据
+kProcessTypePbocIcLog     kPbocIc_CardLogArray         NSArray      PBOC卡日志,NSString数组
+-------------------------------------------------------------------------------------------------
+kProcessTypePbocInitCore  -                              -            Pboc卡交易核心初始化，无返回数据
+-------------------------------------------------------------------------------------------------
+kProcessTypePbocInitTrans kPbocIc_ResetAtrData         NSData       PBOC卡复位数据
+kProcessTypePbocInitTrans kPbocIc_Field55String        NSString     PBOC交易初始化55域数据
+kProcessTypePbocInitTrans kPbocIc_PanString            NSString     PBOC交易初始化卡号
+kProcessTypePbocInitTrans kPbocIc_PanSeqNoString       NSString     PBOC交易初始化卡系列号
+kProcessTypePbocInitTrans kPbocIc_Track2String         NSString     PBOC交易初始化二磁道等效数据
+kProcessTypePbocInitTrans kPbocIc_ExtInfoString        NSString     PBOC交易初始化附加数据
+-------------------------------------------------------------------------------------------------
+kProcessTypePbocDoTrans   kPbocIc_ResetAtrData         NSData       PBOC卡复位数据
+kProcessTypePbocDoTrans   kPbocIc_Field55String        NSString     PBOC交易完成后返回的55域数据
+
+=================================================================================================
+kProcessTypePinpadPowerOn                                             打开外接密码键盘电源，无返回数据
+-------------------------------------------------------------------------------------------------
+kProcessTypePinpadPowerOff                                            关闭外接密码键盘电源，无返回数据
+-------------------------------------------------------------------------------------------------
+kProcessTypePinpadDownloadMasterKey                                   外接密码键盘下载主密钥，无数据
+-------------------------------------------------------------------------------------------------
+kProcessTypePinpadDownloadWorkingKey                                  外接密码键盘下载工作密钥，无数据
+-------------------------------------------------------------------------------------------------
+kProcessTypePinpadVersion kPinpad_VersionString        NSString     外接密码键盘固件版本信息
+-------------------------------------------------------------------------------------------------
+kProcessTypePinpadInputPin kPinpad_PinblockString      NSString     外接密码键盘输入的Pinblock
+
+=================================================================================================
+kProcessTypeFingerprintPowerOn                                        打开内置指纹模块电源，无返回数据
+-------------------------------------------------------------------------------------------------
+kProcessTypeFingerprintPowerOff                                       关闭内置指纹模块电源，无返回数据
+-------------------------------------------------------------------------------------------------
+kProcessTypeFingerprintVersion kFingerprint_VersionString  NSString 内置指纹模块固件版本信息
+-------------------------------------------------------------------------------------------------
+kProcessTypeFingerprintFeature kFingerprint_PinblockString NSString 内置指纹模块采集的指纹特征数据
+
+
+
+
