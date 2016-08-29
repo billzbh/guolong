@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		122D5D331CD83E80007E66CC /* guolong.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 122D5D321CD83E80007E66CC /* guolong.bundle */; };
 		122D5D3F1CD84336007E66CC /* RIButtonItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 122D5D361CD84336007E66CC /* RIButtonItem.m */; };
 		122D5D401CD84336007E66CC /* UIActionSheet+Blocks.m in Sources */ = {isa = PBXBuildFile; fileRef = 122D5D381CD84336007E66CC /* UIActionSheet+Blocks.m */; };
 		122D5D411CD84336007E66CC /* UIAlertView+Blocks.m in Sources */ = {isa = PBXBuildFile; fileRef = 122D5D3A1CD84336007E66CC /* UIAlertView+Blocks.m */; };
@@ -37,7 +36,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		122D5D321CD83E80007E66CC /* guolong.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = guolong.bundle; sourceTree = "<group>"; };
 		122D5D351CD84336007E66CC /* RIButtonItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RIButtonItem.h; sourceTree = "<group>"; };
 		122D5D361CD84336007E66CC /* RIButtonItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RIButtonItem.m; sourceTree = "<group>"; };
 		122D5D371CD84336007E66CC /* UIActionSheet+Blocks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIActionSheet+Blocks.h"; sourceTree = "<group>"; };
@@ -126,7 +124,6 @@
 		1249475B1CD08F5400B90B27 = {
 			isa = PBXGroup;
 			children = (
-				122D5D321CD83E80007E66CC /* guolong.bundle */,
 				124947B61CD1E33300B90B27 /* Localizable.strings */,
 				124947AB1CD1B55E00B90B27 /* framework */,
 				122D5D341CD84336007E66CC /* UIAlertView-Blocks */,
@@ -256,7 +253,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				124947B81CD1E33300B90B27 /* Localizable.strings in Resources */,
-				122D5D331CD83E80007E66CC /* guolong.bundle in Resources */,
 				124947771CD08F5500B90B27 /* LaunchScreen.storyboard in Resources */,
 				124947741CD08F5500B90B27 /* Assets.xcassets in Resources */,
 				124947721CD08F5500B90B27 /* Main.storyboard in Resources */,

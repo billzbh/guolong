@@ -200,12 +200,6 @@ NSString *EADSessionDataReceivedNotification = @"EADSessionDataReceivedNotificat
     return [_readData length];
 }
 
-#pragma mark EAAccessoryDelegate
-- (void)accessoryDidDisconnect:(EAAccessory *)accessory
-{
-    // do something ...
-}
-
 #pragma mark NSStreamDelegateEventExtensions
 
 // asynchronous NSStream handleEvent method
