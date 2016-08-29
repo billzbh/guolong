@@ -204,6 +204,7 @@ NSString *EADSessionDataReceivedNotification = @"EADSessionDataReceivedNotificat
 - (void)accessoryDidDisconnect:(EAAccessory *)accessory
 {
     // do something ...
+    
 }
 
 #pragma mark NSStreamDelegateEventExtensions
