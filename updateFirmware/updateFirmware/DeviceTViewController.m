@@ -6,8 +6,6 @@
 //  Copyright © 2016年 hxsmart. All rights reserved.
 //
 #define isPad (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
-//#define StrAccExtProNameInfo  @"com.insta360.guolong"
-//#define PROTOCOL_STRING_IMATE   @"com.imate.bluetooth"
 #define PROTOCOL_STRING_IMATE   @"com.insta360.guolong"
 #define DBNAME @"guolong.hex"
 #define SEND_MTU 32
@@ -22,6 +20,7 @@
 #import <BmobSDK/Bmob.h>
 #import <BmobSDK/BmobProFile.h>
 #import "ZBHAlertViewController.h"
+#import "MBProgressHUD.h"
 
 
 static volatile BOOL sg_isWorking = NO;
@@ -37,19 +36,14 @@ static volatile BOOL sg_isWorking = NO;
     volatile BOOL receivedCompleted;
     int allPackNum;
     int customMTU;
+    
+    MBProgressHUD *hud;
 }
 
 @property (weak, nonatomic) IBOutlet UILabel *productName;
-@property (weak, nonatomic) IBOutlet UILabel *manufacturer;
-
-@property (weak, nonatomic) IBOutlet UILabel *model;
-
-
 @property (weak, nonatomic) IBOutlet UILabel *serialNum;
-
 @property (weak, nonatomic) IBOutlet UILabel *revision;
-@property (weak, nonatomic) IBOutlet UILabel *LocalVersion;
-@property (weak, nonatomic) IBOutlet UILabel *remoteVersion;
+@property (weak, nonatomic) IBOutlet UILabel *xxxtitle;
 
 @property (weak, nonatomic) IBOutlet UIButton *updateFirware;
 
@@ -60,7 +54,6 @@ static volatile BOOL sg_isWorking = NO;
 @property (strong,nonatomic) NSMutableData *recevicedData;
 
 @property (weak, nonatomic) IBOutlet UITextField *packNameSet;
-
 @end
 
 @implementation DeviceTViewController
@@ -100,68 +93,6 @@ static volatile BOOL sg_isWorking = NO;
             [_statusLog setText:str];
         });
     });
-
-    
-
-//    allPackNum = (int)[[_packNameSet text] integerValue];
-//    [_statusLog setText:@"等待请求包，20s"];
-//    
-//    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-//        
-//        int iRet;
-//        Byte dataBytes[12*allPackNum];
-//        int num = 0;
-//        Byte receiveBytes[50];
-//        
-//        iRet = [self syncSendReceive:nil receivedBuff:receiveBytes timeout:20];
-//        if(iRet<0)
-//        {
-//            dispatch_async(dispatch_get_main_queue(), ^{
-//                [_statusLog setText:@"20s等待请求包超时"];
-//            });
-//            return;
-//        }
-//            
-//        num = receiveBytes[3]*256+receiveBytes[4];
-//        dispatch_async(dispatch_get_main_queue(), ^{
-//            NSString *str = [NSString stringWithFormat:@"接收ACK 包号：%d,",num];
-//            [_statusLog setText:str];
-//        });
-//        
-//        double timeSeconds = [self currentTimeSeconds];
-//        
-//        int UnsenddataLength=allPackNum*12;
-//        while (1) {
-//            int mlength = 12;
-//            memset(receiveBytes, 0, 50);
-//            memset(dataBytes+(num-1)*mlength, num, mlength);//每一包的内容刚好是包号
-//            NSData* sendPackData =[self PackSendData:dataBytes+(num-1)*mlength length:mlength PackNum:num];
-//            iRet = [self syncSendReceive:sendPackData receivedBuff:receiveBytes timeout:5];
-//            if(iRet < 0) {
-//                //接收数据超时
-//                NSLog(@"接收数据超时");
-//                dispatch_async(dispatch_get_main_queue(), ^{
-//                    [_statusLog setText:@"接收ACK 5s超时了"];
-//                });
-//                return;
-//            }
-//            
-//            num = receiveBytes[3]*256+receiveBytes[4];
-//            if ( num > (UnsenddataLength+mlength-1)/mlength ) {
-//                
-//                timeSeconds = [self currentTimeSeconds] - timeSeconds;
-//                dispatch_async(dispatch_get_main_queue(), ^{
-//                    NSString *str = [NSString stringWithFormat:@"包号：%d,需要发的包数目：%d,用时:%f s",num,(UnsenddataLength+mlength-1)/mlength,timeSeconds];
-//                    [_statusLog setText:str];
-//                });
-//                break;
-//            }
-//            dispatch_async(dispatch_get_main_queue(), ^{
-//                NSString *str = [NSString stringWithFormat:@"接收ACK 包号：%d,",num];
-//                [_statusLog setText:str];
-//            });
-//        }
-//    });
 }
 
 
@@ -176,52 +107,139 @@ static volatile BOOL sg_isWorking = NO;
 
 - (IBAction)updateAction {
     
-        
-    [self setButtonEnable:NO];
-    if (RVersion==nil) {
-        //查询远程远程服务器版本
-        [self check2Update];
-        ZBHAlertViewController *alertView = [[ZBHAlertViewController alloc] initWithTitle:NSLocalizedString(@"RemoteVersionIsNil", nil) message:NSLocalizedString(@"clickAgain", nil) viewController:self];
+    [_statusLog setText:@""];
+    if (!isDeviceConnected) {
+        ZBHAlertViewController *alertView = [[ZBHAlertViewController alloc] initWithTitle:NSLocalizedString(@"Disconnected", nil) message:nil viewController:self];
         
         RIButtonItem *okItem = [RIButtonItem itemWithLabel:NSLocalizedString(@"makeSure", nil) action:^{
-            
+            [self setButtonEnable:YES];
         }];
         [alertView addButton:okItem type:RIButtonItemType_Destructive];
         [alertView show];
         return;
     }
     
-//    //比较版本号。如果没有设备版本号或者远程版本 <= 设备版本号，直接return并弹出警告。
-//    if(DVersion==nil)
-//    {
-//        //弹出框提示读不到设备号，不能升级。
-//        ZBHAlertViewController *alertView = [[ZBHAlertViewController alloc] initWithTitle:NSLocalizedString(@"checkLocalVersionFail", nil) message:NSLocalizedString(@"makeSureDeviceConnect", nil) viewController:self];
-//        
-//        RIButtonItem *okItem = [RIButtonItem itemWithLabel:NSLocalizedString(@"makeSure", nil) action:^{
-//            [self setButtonEnable:YES];
-//            isUpdating = NO;
-//        }];
-//        [alertView addButton:okItem type:RIButtonItemType_Destructive];
-//        [alertView show];
-//        return;
-//    }
-//
-//    if([DVersion floatValue] >= [RVersion floatValue])
-//    {
-//        //弹出框，提示本地版本高于远程的版本。如果需要强制升级，请长按
-//        ZBHAlertViewController *alertView = [[ZBHAlertViewController alloc] initWithTitle:NSLocalizedString(@"LocalHighthanRemote", nil) message:NSLocalizedString(@"forceUpdateTip", nil) viewController:self];
-//        
-//        RIButtonItem *okItem = [RIButtonItem itemWithLabel:NSLocalizedString(@"makeSure", nil) action:^{
-//            [self setButtonEnable:YES];
-//            isUpdating = NO;
-//        }];
-//        [alertView addButton:okItem type:RIButtonItemType_Destructive];
-//        [alertView show];
-//        return;
-//    }
-    
-    [self updateFirmware];
+    [self setButtonEnable:NO];
+    [self check2Update];
 }
+
+-(void)check2Update
+{
+    
+    hud = [MBProgressHUD showHUDAddedTo:self.view.window animated:YES];
+    // Set some text to show the initial status.
+    hud.label.text = NSLocalizedString(@"isCheckingRomoteVersion", nil);
+//    hud.detailsLabel.text = NSLocalizedString(@"isCheckingRomoteVersion", nil);
+    // Will look best, if we set a minimum size.
+    hud.minSize = CGSizeMake(300.f, 100.f);
+    hud.contentColor = [UIColor colorWithRed:0.f green:0.6f blue:0.7f alpha:1.0f];
+    
+    //查找GameScore表
+    BmobQuery  *bquery = [BmobQuery queryWithClassName:@"GL_Firmware"];
+    //查找GameScore表里面id为0c6db13c的数据
+    [bquery getObjectInBackgroundWithId:@"LXjr666H" block:^(BmobObject *object,NSError *error){
+        if (error){
+            //进行错误处理
+            //弹窗：请看到远程版本号后再操作！
+            [hud hideAnimated:YES];
+            ZBHAlertViewController *alertView = [[ZBHAlertViewController alloc] initWithTitle:NSLocalizedString(@"checkRemoteVersionFail", nil) message:NSLocalizedString(@"checkNetwork", nil) viewController:self];
+            
+            RIButtonItem *okItem = [RIButtonItem itemWithLabel:NSLocalizedString(@"makeSure", nil) action:^{
+                [self setButtonEnable:YES];
+            }];
+            [alertView addButton:okItem type:RIButtonItemType_Destructive];
+            [alertView show];
+            
+        }else{
+            //表里有id为LXjr666H的数据
+            if (object) {
+                //得到version和File
+                BmobFile *File = [object objectForKey:@"HexFile"];
+                filename = File.name;
+                HexUrl = File.url;
+                RVersion = [object objectForKey:@"Version"];
+                
+                hud = [MBProgressHUD HUDForView:self.view.window];
+                hud.label.text = NSLocalizedString(@"CheckRomoteVersionOK", nil);
+                
+                //判断是否需要升级的逻辑在这里
+                if([DVersion isEqualToString:RVersion])
+                {
+                    [hud hideAnimated:YES];
+                    //弹出框，提示本地版本高于远程的版本。如果需要强制升级，请长按
+                    ZBHAlertViewController *alertView = [[ZBHAlertViewController alloc] initWithTitle:NSLocalizedString(@"LocalHighthanRemote", nil) message:NSLocalizedString(@"forceUpdateTip", nil) viewController:self];
+            
+                    RIButtonItem *okItem = [RIButtonItem itemWithLabel:NSLocalizedString(@"makeSure", nil) action:^{
+                        [self setButtonEnable:YES];
+                    }];
+                    [alertView addButton:okItem type:RIButtonItemType_Destructive];
+                    [alertView show];
+                    return;
+                }
+                
+                usleep(200000);
+                [self DownloadHexFile];
+            }
+        }
+    }];
+}
+
+
+-(void)DownloadHexFile
+{
+    if (isDownloading==YES) {
+        return;
+    }
+    
+    hud = [MBProgressHUD HUDForView:self.view.window];
+    hud.label.text = NSLocalizedString(@"downloading", nil);
+    usleep(100000);
+    isDownloading = YES;
+    
+    //1. 创建url
+    NSURL *url = [NSURL URLWithString:HexUrl];
+    // 2. Request
+    NSURLRequest *request = [NSURLRequest requestWithURL:url];
+    
+    // 3. Connection
+    [NSURLConnection sendAsynchronousRequest:request queue:[[NSOperationQueue alloc] init] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
+        if (connectionError == nil) {
+            // 网络请求结束之后执行!
+            // 更新界面
+            dispatch_async(dispatch_get_main_queue(), ^{
+                
+                hud = [MBProgressHUD HUDForView:self.view.window];
+                hud.label.text = NSLocalizedString(@"downloadOK", nil);
+            });
+            
+            //将Data存在持久化。
+            [data writeToFile:[self saveFilePath:DBNAME] atomically:YES];
+            isDownloading = NO;
+            
+            
+            usleep(100000);
+            dispatch_async(dispatch_get_main_queue(), ^{
+                //开始更新
+                [self updateFirmware];
+            });
+            
+        }else{
+            
+            [hud hideAnimated:YES];
+            //弹出框，提示本地版本高于远程的版本。如果需要强制升级，请长按
+            ZBHAlertViewController *alertView = [[ZBHAlertViewController alloc] initWithTitle:NSLocalizedString(@"downloadFail", nil) message:nil viewController:self];
+            
+            RIButtonItem *okItem = [RIButtonItem itemWithLabel:NSLocalizedString(@"makeSure", nil) action:^{
+                [self setButtonEnable:YES];
+            }];
+            [alertView addButton:okItem type:RIButtonItemType_Destructive];
+            [alertView show];
+        }
+    }];
+    return;
+}
+
+
 
 -(void)updateFirmware
 {
@@ -236,11 +254,17 @@ static volatile BOOL sg_isWorking = NO;
         //读取文件
         NSData* hexData = [NSData dataWithContentsOfFile:[self saveFilePath:DBNAME]];
         Byte *sendData = (Byte*)[hexData bytes];
-        
         int packnum=0;
+        
+        
+        hud = [MBProgressHUD HUDForView:self.view.window];
+        hud.mode = MBProgressHUDModeDeterminateHorizontalBar;
+        __block float progress = 0.0f;
         dispatch_async(dispatch_get_main_queue(), ^{
-            [_statusLog setText:NSLocalizedString(@"startCommand", nil)];
+            hud.label.text = NSLocalizedString(@"startCommand", nil);
+            hud.progress = progress;
         });
+        usleep(100000);
         
         Byte receiveBytes[50];
         Byte sendBytes[2];
@@ -252,7 +276,9 @@ static volatile BOOL sg_isWorking = NO;
             //接收数据超时
             NSLog(@"接收数据超时，升级出错");
             dispatch_async(dispatch_get_main_queue(), ^{
-                [_statusLog setText:NSLocalizedString(@"stopUpdate", nil)];
+                
+                [hud hideAnimated:YES];
+                
                 ZBHAlertViewController *alertView = [[ZBHAlertViewController alloc] initWithTitle:NSLocalizedString(@"updateFailbyTimeout", nil) message:NSLocalizedString(@"stopUpdate", nil) viewController:self];
                 
                 RIButtonItem *okItem = [RIButtonItem itemWithLabel:NSLocalizedString(@"makeSure", nil) action:^{
@@ -270,7 +296,9 @@ static volatile BOOL sg_isWorking = NO;
             //启动升级程序失败
             NSLog(@"启动升级程序失败");
             dispatch_async(dispatch_get_main_queue(), ^{
-                [_statusLog setText:NSLocalizedString(@"stopUpdate", nil)];
+                
+                [hud hideAnimated:YES];
+                
                 ZBHAlertViewController *alertView = [[ZBHAlertViewController alloc] initWithTitle:NSLocalizedString(@"ACKError", nil) message:NSLocalizedString(@"stopUpdate", nil) viewController:self];
                 
                 RIButtonItem *okItem = [RIButtonItem itemWithLabel:NSLocalizedString(@"makeSure", nil) action:^{
@@ -295,8 +323,9 @@ static volatile BOOL sg_isWorking = NO;
         while (1) {
             
             dispatch_async(dispatch_get_main_queue(), ^{
-                NSString *str = [NSString stringWithFormat:@"%@ [进度:%%%d]",NSLocalizedString(@"tranferData", nil),(int)((float)((packnum-1)*customMTU)/(float)UnsenddataLength*100)];
-                [_statusLog setText:str];
+                hud.label.text = NSLocalizedString(@"tranferData", nil);
+                progress = (float)((packnum-1)*customMTU)/(float)UnsenddataLength/3.0;
+                hud.progress = progress;
             });
             
             if (packnum == (UnsenddataLength+customMTU-1)/customMTU) {
@@ -310,13 +339,21 @@ static volatile BOOL sg_isWorking = NO;
             NSData* sendPackData =[self PackSendData:dataBytes length:customMTU PackNum:packnum];
             iRet = [self syncSendReceive:sendPackData receivedBuff:receiveBytes timeout:TIMEOUT];
             if(iRet < 0) {
-                //接收数据超时
-                NSLog(@"接收数据超时");
+                
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    [_statusLog setText:@"接收ACK 5s超时了"];
+                    
+                    [hud hideAnimated:YES];
+                    
+                    ZBHAlertViewController *alertView = [[ZBHAlertViewController alloc] initWithTitle:NSLocalizedString(@"updateFailbyTimeout", nil) message:NSLocalizedString(@"LastACKError", nil) viewController:self];
+                    RIButtonItem *okItem = [RIButtonItem itemWithLabel:NSLocalizedString(@"makeSure", nil) action:^{
+                        
+                        isUpdating = NO;
+                        [self setButtonEnable:YES];
+                        
+                    }];
+                    [alertView addButton:okItem type:RIButtonItemType_Destructive];
+                    [alertView show];
                 });
-                isUpdating = NO;
-                [self setButtonEnable:YES];
                 return;
             }
             
@@ -324,7 +361,9 @@ static volatile BOOL sg_isWorking = NO;
             if (retCode!=0x03) {
                 
                 dispatch_async(dispatch_get_main_queue(), ^{
-                    [_statusLog setText:NSLocalizedString(@"stopUpdate", nil)];
+                    
+                    [hud hideAnimated:YES];
+
                     ZBHAlertViewController *alertView = [[ZBHAlertViewController alloc] initWithTitle:NSLocalizedString(@"ACKError", nil) message:NSLocalizedString(@"stopUpdate", nil) viewController:self];
                     
                     RIButtonItem *okItem = [RIButtonItem itemWithLabel:NSLocalizedString(@"makeSure", nil) action:^{
@@ -340,22 +379,21 @@ static volatile BOOL sg_isWorking = NO;
             if ( packnum > (UnsenddataLength+customMTU-1)/customMTU ) {
                 break;
             }
-            dispatch_async(dispatch_get_main_queue(), ^{
-                NSString *str = [NSString stringWithFormat:@"接收ACK 包号：%d,",packnum];
-                [_statusLog setText:str];
-            });
         }
         
         //发送结束升级包
         dispatch_async(dispatch_get_main_queue(), ^{
-            [_statusLog setText:[NSString stringWithFormat:@"%@",NSLocalizedString(@"sendFinishCMD", nil)]];
+            hud.label.text = NSLocalizedString(@"sendFinishCMD", nil);
+            hud.progress = progress + 0.01f;
         });
         
         memset(receiveBytes, 0, 50);
         iRet = [self syncSendReceive:[self packFinishData] receivedBuff:receiveBytes timeout:20];
         if (iRet<0) {
             dispatch_async(dispatch_get_main_queue(), ^{
-                [_statusLog setText:NSLocalizedString(@"stopUpdate", nil)];
+                
+                [hud hideAnimated:YES];
+
                 ZBHAlertViewController *alertView = [[ZBHAlertViewController alloc] initWithTitle:NSLocalizedString(@"updateFailbyTimeout", nil) message:NSLocalizedString(@"LastACKError", nil) viewController:self];
                 RIButtonItem *okItem = [RIButtonItem itemWithLabel:NSLocalizedString(@"makeSure", nil) action:^{
                     
@@ -374,27 +412,24 @@ static volatile BOOL sg_isWorking = NO;
         if(retCode==0x05)//成功
         {
             dispatch_async(dispatch_get_main_queue(), ^{
-                [_statusLog setText:NSLocalizedString(@"updateOK", nil)];
-//                ZBHAlertViewController *alertView = [[ZBHAlertViewController alloc] initWithTitle:NSLocalizedString(@"updateOK", nil) message:@"" viewController:self];
-//                RIButtonItem *okItem = [RIButtonItem itemWithLabel:NSLocalizedString(@"makeSure", nil) action:^{
-//                    
-//                }];
-//                [alertView addButton:okItem type:RIButtonItemType_Cancel];
-//                [alertView show];
+                hud.label.text = NSLocalizedString(@"updateOK", nil);
+                hud.progress = progress + 0.01f;
             });
+            usleep(100000);
             
         }else if(retCode==0x06)//失败
         {
             dispatch_async(dispatch_get_main_queue(), ^{
-                [_statusLog setText:NSLocalizedString(@"updateFail", nil)];
+                
+                [hud hideAnimated:YES];
+
                 ZBHAlertViewController *alertView = [[ZBHAlertViewController alloc] initWithTitle:NSLocalizedString(@"updateFail", nil) message:@"" viewController:self];
                 RIButtonItem *okItem = [RIButtonItem itemWithLabel:NSLocalizedString(@"makeSure", nil) action:^{
-                    
+                    isUpdating = NO;
+                    [self setButtonEnable:YES];
                 }];
                 [alertView addButton:okItem type:RIButtonItemType_Destructive];
                 [alertView show];
-                isUpdating = NO;
-                [self setButtonEnable:YES];
             });
             
             return;
@@ -403,77 +438,82 @@ static volatile BOOL sg_isWorking = NO;
         
         //等待固件升级成功
         dispatch_async(dispatch_get_main_queue(), ^{
-            [_statusLog setText:[NSString stringWithFormat:@"%@",NSLocalizedString(@"waitForUpdate", nil)]];
+            hud.label.text = NSLocalizedString(@"waitForUpdate", nil);
+            hud.progress = progress + 0.01f;
         });
         
         memset(receiveBytes, 0, 50);
-        iRet = [self syncSendReceive:nil receivedBuff:receiveBytes timeout:40];
+        iRet = [self waitForRestart:receiveBytes timeout:40];
         if (iRet<0) {
             dispatch_async(dispatch_get_main_queue(), ^{
-                [_statusLog setText:NSLocalizedString(@"stopUpdate", nil)];
+                [hud hideAnimated:YES];
+                
+                [_statusLog setText:NSLocalizedString(@"updateFirmFail", nil)];
+                
                 ZBHAlertViewController *alertView = [[ZBHAlertViewController alloc] initWithTitle:NSLocalizedString(@"updateFailbyTimeout", nil) message:NSLocalizedString(@"LastACKError", nil) viewController:self];
                 RIButtonItem *okItem = [RIButtonItem itemWithLabel:NSLocalizedString(@"makeSure", nil) action:^{
-                    
+                    isUpdating = NO;
+                    [self setButtonEnable:YES];
                 }];
                 [alertView addButton:okItem type:RIButtonItemType_Destructive];
                 [alertView show];
             });
             
-            isUpdating = NO;
-            [self setButtonEnable:YES];
             return ;
+        }
+        
+    
+        progress  = hud.progress;
+        while (progress < 1.0f) {
+            progress += 0.01f;
+            dispatch_async(dispatch_get_main_queue(), ^{
+                hud.progress = progress;
+            });
+            usleep(50000);
         }
         
         retCode = receiveBytes[2];
         if(retCode==0x07)//升级成功
         {
             dispatch_async(dispatch_get_main_queue(), ^{
+                
+                UIImage *image = [[UIImage imageNamed:@"Checkmark"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+                UIImageView *imageView = [[UIImageView alloc] initWithImage:image];
+                hud.customView = imageView;
+                hud.mode = MBProgressHUDModeCustomView;
+                hud.label.text = NSLocalizedString(@"firmwareFINSH", nil);
                 [_statusLog setText:NSLocalizedString(@"firmwareFINSH", nil)];
-                ZBHAlertViewController *alertView = [[ZBHAlertViewController alloc] initWithTitle:NSLocalizedString(@"firmwareFINSH", nil) message:@"" viewController:self];
-                RIButtonItem *okItem = [RIButtonItem itemWithLabel:NSLocalizedString(@"makeSure", nil) action:^{
-                    
-                }];
-                [alertView addButton:okItem type:RIButtonItemType_Cancel];
-                [alertView show];
+                
+                [hud.button setTitle:NSLocalizedString(@"makeSure", nil) forState:UIControlStateNormal];
+                [hud.button addTarget:self action:@selector(makeSureWork:) forControlEvents:UIControlEventTouchUpInside];
+                
             });
             
+        }else{
+            
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [hud hideAnimated:YES];
+                [_statusLog setText:NSLocalizedString(@"updateFirmFail", nil)];
+                ZBHAlertViewController *alertView = [[ZBHAlertViewController alloc] initWithTitle:NSLocalizedString(@"updateFirmFail", nil) message:@"" viewController:self];
+                RIButtonItem *okItem = [RIButtonItem itemWithLabel:NSLocalizedString(@"makeSure", nil) action:^{
+                    isUpdating = NO;
+                    [self setButtonEnable:YES];
+                }];
+                [alertView addButton:okItem type:RIButtonItemType_Destructive];
+                [alertView show];
+            });
         }
-        [self setButtonEnable:YES];
-        isUpdating = NO;
         return;
-        
     });
  }
 
--(BOOL)DownloadHexFile
-{
-    if (isDownloading==YES) {
-        return NO;
-    }
-    [_statusLog setText:NSLocalizedString(@"downloading", nil)];
-    isDownloading = YES;
-    
-    //1. 创建url
-    NSURL *url = [NSURL URLWithString:HexUrl];
-    // 2. Request
-    NSURLRequest *request = [NSURLRequest requestWithURL:url];
-    
-    // 3. Connection
-    [NSURLConnection sendAsynchronousRequest:request queue:[[NSOperationQueue alloc] init] completionHandler:^(NSURLResponse *response, NSData *data, NSError *connectionError) {
-        if (connectionError == nil) {
-            // 网络请求结束之后执行!
-            // 更新界面
-            dispatch_async(dispatch_get_main_queue(), ^{
-                [_statusLog setText:NSLocalizedString(@"downloadOK", nil)];
-            });
-            
-            //将Data存在持久化。
-            [data writeToFile:[self saveFilePath:DBNAME] atomically:YES];
-            isDownloading = NO;
-        }
-    }];
-    return NO;
+
+-(void)makeSureWork:(id)sender {
+    isUpdating = NO;
+    [self setButtonEnable:YES];
+    [hud hideAnimated:YES];
 }
+
 
 -(void)viewWillDisappear:(BOOL)animated
 {
@@ -485,11 +525,13 @@ static volatile BOOL sg_isWorking = NO;
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
+
     //临时测试，强制升级
 //    UILongPressGestureRecognizer *longPress=[[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(force2update:)];
 //    longPress.minimumPressDuration=0.6;//定义按的时间
 //    [_updateFirware addGestureRecognizer:longPress];
-    
+
+    [self.xxxtitle setText:NSLocalizedString(@"xxxxxTitle", nil)];
     isUpdating = NO;
     isDownloading = NO;
     isDeviceConnected = NO;
@@ -522,49 +564,7 @@ static volatile BOOL sg_isWorking = NO;
     }
 }
 
--(void)check2Update
-{
-    //查询远程远程服务器版本
-    [_statusLog setText:NSLocalizedString(@"isCheckingRomoteVersion", nil)];
-    
-    //查找GameScore表
-    BmobQuery  *bquery = [BmobQuery queryWithClassName:@"GL_Firmware"];
-    //查找GameScore表里面id为0c6db13c的数据
-    [bquery getObjectInBackgroundWithId:@"LXjr666H" block:^(BmobObject *object,NSError *error){
-        if (error){
-            //进行错误处理
-            
-            //弹窗：请看到远程版本号后再操作！
-            ZBHAlertViewController *alertView = [[ZBHAlertViewController alloc] initWithTitle:NSLocalizedString(@"checkRemoteVersionFail", nil) message:NSLocalizedString(@"checkNetwork", nil) viewController:self];
-            
-            RIButtonItem *okItem = [RIButtonItem itemWithLabel:NSLocalizedString(@"makeSure", nil) action:^{
-                [_statusLog setText:NSLocalizedString(@"checkRemoteVersionFail", nil)];
-            }];
-            [alertView addButton:okItem type:RIButtonItemType_Destructive];
-            [alertView show];
-            
-        }else{
-            //表里有id为LXjr666H的数据
-            if (object) {
-                //得到version和File
-                BmobFile *File = [object objectForKey:@"HexFile"];
-                filename = File.name;
-                HexUrl = File.url;
-                RVersion = [object objectForKey:@"Version"];
-                
-                //更新UI
-                [_statusLog setText:NSLocalizedString(@"CheckRomoteVersionOK", nil)];
-                [_remoteVersion setText:RVersion];
-                
-                
-                [self DownloadHexFile];
-                
-            }
-        }
-        [self setButtonEnable:YES];
-        
-    }];
-}
+
 
 -(NSData*)PackSendData:(NSData *)data PackNum:(int)num
 {
@@ -611,11 +611,8 @@ static volatile BOOL sg_isWorking = NO;
 -(void)updateUI2Zero
 {
     [_productName setText:@"N/A"];
-    [_manufacturer setText:@"N/A"];
-    [_model setText:@"N/A"];
     [_serialNum setText:@"N/A"];
     [_revision setText:@"N/A"];
-    [_LocalVersion setText:@"N/A"];
     [_statusLog setText:NSLocalizedString(@"Disconnected", nil)];
 }
 
@@ -677,10 +674,7 @@ static volatile BOOL sg_isWorking = NO;
         _selectedAccessory = [_eaSessionController accessory];
         
         DVersion = _selectedAccessory.firmwareRevision;//设备固件版本
-        _LocalVersion.text = _selectedAccessory.firmwareRevision;
         _productName.text = _selectedAccessory.name;
-        _manufacturer.text = _selectedAccessory.manufacturer;
-        _model.text = _selectedAccessory.modelNumber;
         _serialNum.text = _selectedAccessory.serialNumber;
         _revision.text= _selectedAccessory.hardwareRevision;
         
@@ -752,13 +746,11 @@ static volatile BOOL sg_isWorking = NO;
             _selectedAccessory = [_eaSessionController accessory];
             
 //            NSLog(@"%@",_selectedAccessory);
-            _LocalVersion.text = _selectedAccessory.firmwareRevision;
             DVersion = _selectedAccessory.firmwareRevision;//设备固件版本
             _productName.text = _selectedAccessory.name;
-            _manufacturer.text = _selectedAccessory.manufacturer;
-            _model.text = _selectedAccessory.modelNumber;
             _serialNum.text = _selectedAccessory.serialNumber;
             _revision.text= _selectedAccessory.hardwareRevision;
+            
             
             [_eaSessionController openSession];
             isDeviceConnected = YES;
@@ -828,6 +820,59 @@ static volatile BOOL sg_isWorking = NO;
  -3 一次发送接收未完成
  > 长度
  */
+- (int)waitForRestart:(Byte*)outBytes timeout:(int) timeout
+{
+    if (sg_isWorking==YES) {
+        return -3;//已经在发送接收中，请等待一次发送接收完毕
+    }
+    sg_isWorking = YES;
+    receivedCompleted = NO;
+    
+    //清空数据
+    [_recevicedData resetBytesInRange:NSMakeRange(0,_recevicedData.length)];
+    [_recevicedData setLength:0];
+    
+    dispatch_async(dispatch_get_main_queue(), ^{ //解决多线程写数据冲突的问题，使用main_queue进行排队
+        [_eaSessionController writeData:nil];
+    });
+    
+    double timeSeconds = [self currentTimeSeconds] + timeout;
+    while ([self currentTimeSeconds] < timeSeconds) {
+        if(receivedCompleted)
+            break;
+        usleep(10000);
+        dispatch_async(dispatch_get_main_queue(), ^{
+            hud = [MBProgressHUD HUDForView:self.view.window];
+            float process = hud.progress;
+            process += 0.00025f;
+            hud.progress = process;
+        });
+    }
+    
+    if (!receivedCompleted) {
+        sg_isWorking = NO;
+        return -1;//timeout
+    }
+    
+    Byte *tmp = (Byte*)[_recevicedData bytes];
+    int length = (int)[_recevicedData length];
+    if (length == 0) {
+        return -1;
+    }
+    
+    memcpy(outBytes, tmp,length);
+    sg_isWorking = NO;
+    return length;
+}
+
+
+
+
+/**
+ -1 timeout
+ -3 一次发送接收未完成
+ > 长度
+ */
 - (int)syncSendReceive:(NSData *)inData receivedBuff:(Byte*)outBytes timeout:(int) timeout
 {
     if (sg_isWorking==YES) {
@@ -881,7 +926,6 @@ static volatile BOOL sg_isWorking = NO;
         [_updateFirware setEnabled:YES];
         [_updateFirware setBackgroundColor:[UIColor redColor]];
         [_updateFirware setTitle:NSLocalizedString(@"startUpdate", nil) forState:UIControlStateNormal];
-        
     }else{
         [_updateFirware setEnabled:NO];
         [_updateFirware setBackgroundColor:[UIColor grayColor]];
@@ -902,7 +946,6 @@ static volatile BOOL sg_isWorking = NO;
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
 }
 
 -(void)dealloc{

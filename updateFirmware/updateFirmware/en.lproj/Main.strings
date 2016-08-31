@@ -27,7 +27,7 @@
 "DhT-Ds-Ql8.text" = "Model";
 
 /* Class = "UILabel"; text = "Status:"; ObjectID = "Djg-Lz-VRw"; */
-"Djg-Lz-VRw.text" = "Log:";
+"Djg-Lz-VRw.text" = "Status:";
 
 /* Class = "UILabel"; text = "Cirrus Logic Headset"; ObjectID = "GX2-jI-v9t"; */
 "GX2-jI-v9t.text" = "N/A";
@@ -51,7 +51,7 @@
 "R4L-S1-IWP.text" = "N/A";
 
 /* Class = "UITableViewSection"; headerTitle = "Firmware"; ObjectID = "VWO-16-q5g"; */
-"VWO-16-q5g.headerTitle" = "Firmware";
+"VWO-16-q5g.headerTitle" = "   ";
 
 /* Class = "UILabel"; text = "The MFi Headset Reference Design from Cirrus Logic is a rapid development platform for Lightning® connected headsets. It uses the CS42L42 codec to enable a Hi-Fi audio experience when listening to music, videos, or taking phone calls."; ObjectID = "Wah-2i-bnx"; */
 "Wah-2i-bnx.text" = "The MFi Headset Reference Design from Cirrus Logic is a rapid development platform for Lightning® connected headsets. It uses the CS42L42 codec to enable a Hi-Fi audio experience when listening to music, videos, or taking phone calls.";

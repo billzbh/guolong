@@ -10,12 +10,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "updateFirmware/DeviceTViewController.m"
-            timestampString = "494131167.136109"
+            timestampString = "494326280.867988"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "521"
-            endingLineNumber = "521"
-            landmarkName = "-viewDidLoad"
+            startingLineNumber = "404"
+            endingLineNumber = "404"
+            landmarkName = "-updateFirmware"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -26,29 +26,45 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "updateFirmware/DeviceTViewController.m"
-            timestampString = "494131179.112036"
+            timestampString = "494326280.867988"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "656"
-            endingLineNumber = "656"
-            landmarkName = "-_accessoryDidConnect:"
+            startingLineNumber = "454"
+            endingLineNumber = "454"
+            landmarkName = "-updateFirmware"
             landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "updateFirmware/DeviceTViewController.m"
-            timestampString = "494131181.638866"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "705"
-            endingLineNumber = "705"
-            landmarkName = "-_accessoryDidDisconnect:"
-            landmarkType = "5">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "__39-[DeviceTViewController updateFirmware]_block_invoke.270"
+                  moduleName = "updateFirmware"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/lig/Desktop/guolong/updateFirmware/updateFirmware/DeviceTViewController.m"
+                  timestampString = "494328986.460636"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "454"
+                  endingLineNumber = "454"
+                  offsetFromSymbolStart = "766">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "__39-[DeviceTViewController updateFirmware]_block_invoke_2.273"
+                  moduleName = "updateFirmware"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/lig/Desktop/guolong/updateFirmware/updateFirmware/DeviceTViewController.m"
+                  timestampString = "494328986.460889"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "454"
+                  endingLineNumber = "454"
+                  offsetFromSymbolStart = "46">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

@@ -8,12 +8,14 @@
 
 "downloading"="正在下载hex文件...";
 "downloadOK"="hex文件下载完毕!";
-"startCommand"="发送指令以便启动设备的更新程序...";
+"downloadFail"="固件文件远程下载失败!";
+"startCommand"="开始下装程序...";
 "updateOK"="固件数据传输成功";
 "updateFail"="固件数据传输失败";
+"updateFirmFail"="固件升级失败";
 "updateFailbyTimeout"="收发数据超时";
-"Connected"="设备已连接";
-"Disconnected"="设备未连接";
+"Connected"="耳机设备已连接";
+"Disconnected"="耳机设备未连接";
 "startUpdate"="更新固件";
 "stopUpdate"="停止更新";
 "isStopUpdate"="是否停止更新？";
@@ -30,11 +32,12 @@
 "makeSure"="确定";
 "cancelStop"="取消";
 "makeSureDeviceConnect"="请确定耳机设备已经连接！";
-"LocalHighthanRemote"="本地设备版本高于远程版本";
-"forceUpdateTip"="如需强制升级，请长按更新固件按钮";
+"LocalHighthanRemote"="本地设备版本等于远程版本";
+"forceUpdateTip"="无需升级固件";
 "ACKError"="升级程序应答错误";
 "LastACKError"="结束升级指令没有得到应答";
 "isCheckingRomoteVersion"="正在查询远程服务器版本...";
 "sendFinishCMD"="发送数据传输结束指令...";
 "waitForUpdate"="固件升级中，请等待...";
 "firmwareFINSH"="固件升级成功";
+"xxxxxTitle" = "固件升级程序";

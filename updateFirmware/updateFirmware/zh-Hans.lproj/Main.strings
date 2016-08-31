@@ -27,7 +27,7 @@
 "DhT-Ds-Ql8.text" = "型号";
 
 /* Class = "UILabel"; text = "Status:"; ObjectID = "Djg-Lz-VRw"; */
-"Djg-Lz-VRw.text" = "日志:";
+"Djg-Lz-VRw.text" = "状态:";
 
 /* Class = "UILabel"; text = "Cirrus Logic Headset"; ObjectID = "GX2-jI-v9t"; */
 "GX2-jI-v9t.text" = "N/A";
@@ -51,7 +51,7 @@
 "R4L-S1-IWP.text" = "N/A";
 
 /* Class = "UITableViewSection"; headerTitle = "Firmware"; ObjectID = "VWO-16-q5g"; */
-"VWO-16-q5g.headerTitle" = "固件信息";
+"VWO-16-q5g.headerTitle" = "   ";
 
 /* Class = "UILabel"; text = "The MFi Headset Reference Design from Cirrus Logic is a rapid development platform for Lightning® connected headsets. It uses the CS42L42 codec to enable a Hi-Fi audio experience when listening to music, videos, or taking phone calls."; ObjectID = "Wah-2i-bnx"; */
 "Wah-2i-bnx.text" = "Cirrus Logic MFI耳机设计demo是针对雷电接口耳机的快速开发平台。它使用cs42l42编解码器保证听音乐，视频，或打电话的时候可以得到高保真的音频体验";

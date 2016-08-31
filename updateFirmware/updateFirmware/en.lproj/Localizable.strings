@@ -8,9 +8,11 @@
 
 "downloading"="start download hex file...";
 "downloadOK"="download hexfile done!";
-"startCommand"="send command to start Device Update program ...";
+"downloadFail"="download FW file from server fail!";
+"startCommand"="start download program ...";
 "updateOK"="send firmware'data success";
 "updateFail"="send firmware'data fail";
+"updateFirmFail"="firmware update fail";
 "updateFailbyTimeout"="receive data timeout";
 "Connected"="Connected";
 "Disconnected"="Disconnected";
@@ -30,11 +32,12 @@
 "makeSure"="OK";
 "cancelStop"="Cancel";
 "makeSureDeviceConnect"="please make sure the MIF device has connected";
-"LocalHighthanRemote"="Local version is higher than Remote Verison";
-"forceUpdateTip"="if you want to force update firmware,long press [Update] button";
+"LocalHighthanRemote"="Local version is equal to Remote Verison";
+"forceUpdateTip"="you don't need to update firmware";
 "ACKError"="ACK error";
 "LastACKError"="Has no ACK at the last one command";
 "isCheckingRomoteVersion"="Checking the Remote firmware Ver...";
 "sendFinishCMD"="sending data-transfer finish command...";
 "waitForUpdate"="please wait for firmware update";
 "firmwareFINSH"="firmware update success";
+"xxxxxTitle" = "FirmWare Update Program";
