@@ -35,6 +35,7 @@
 		12E36FA11CD85C7F008DF917 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 12E36FA01CD85C7F008DF917 /* AudioToolbox.framework */; };
 		2510F9581D768F65002F2B62 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2510F9571D768F65002F2B62 /* UIKit.framework */; };
 		2510F95C1D768FDA002F2B62 /* MBProgressHUD.m in Sources */ = {isa = PBXBuildFile; fileRef = 2510F95B1D768FDA002F2B62 /* MBProgressHUD.m */; };
+		25BFC8A41D7EC9CC00A17FAB /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 25BFC8A31D7EC9CC00A17FAB /* ViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -84,6 +85,8 @@
 		2510F9571D768F65002F2B62 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		2510F95A1D768FDA002F2B62 /* MBProgressHUD.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MBProgressHUD.h; sourceTree = "<group>"; };
 		2510F95B1D768FDA002F2B62 /* MBProgressHUD.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MBProgressHUD.m; sourceTree = "<group>"; };
+		25BFC8A21D7EC9CC00A17FAB /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		25BFC8A31D7EC9CC00A17FAB /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -158,6 +161,8 @@
 				1249477F1CD08FF400B90B27 /* AboutViewController.m */,
 				1249476A1CD08F5400B90B27 /* AppDelegate.h */,
 				1249476B1CD08F5400B90B27 /* AppDelegate.m */,
+				25BFC8A21D7EC9CC00A17FAB /* ViewController.h */,
+				25BFC8A31D7EC9CC00A17FAB /* ViewController.m */,
 				124947701CD08F5500B90B27 /* Main.storyboard */,
 				124947731CD08F5500B90B27 /* Assets.xcassets */,
 				124947751CD08F5500B90B27 /* LaunchScreen.storyboard */,
@@ -289,6 +294,7 @@
 				1249476C1CD08F5400B90B27 /* AppDelegate.m in Sources */,
 				2510F95C1D768FDA002F2B62 /* MBProgressHUD.m in Sources */,
 				122D5D431CD84336007E66CC /* ZBInputAlertViewController.m in Sources */,
+				25BFC8A41D7EC9CC00A17FAB /* ViewController.m in Sources */,
 				124947801CD08FF400B90B27 /* AboutViewController.m in Sources */,
 				124947691CD08F5400B90B27 /* main.m in Sources */,
 				122D5D411CD84336007E66CC /* UIAlertView+Blocks.m in Sources */,

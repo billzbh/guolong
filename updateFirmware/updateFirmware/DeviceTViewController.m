@@ -126,7 +126,7 @@ static volatile BOOL sg_isWorking = NO;
 -(void)check2Update
 {
     
-    hud = [MBProgressHUD showHUDAddedTo:self.view.window animated:YES];
+    hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
     // Set some text to show the initial status.
     hud.label.text = NSLocalizedString(@"isCheckingRomoteVersion", nil);
 //    hud.detailsLabel.text = NSLocalizedString(@"isCheckingRomoteVersion", nil);
@@ -159,7 +159,7 @@ static volatile BOOL sg_isWorking = NO;
                 HexUrl = File.url;
                 RVersion = [object objectForKey:@"Version"];
                 
-                hud = [MBProgressHUD HUDForView:self.view.window];
+                hud = [MBProgressHUD HUDForView:self.view];
                 hud.label.text = NSLocalizedString(@"CheckRomoteVersionOK", nil);
                 
                 //判断是否需要升级的逻辑在这里
@@ -191,7 +191,7 @@ static volatile BOOL sg_isWorking = NO;
         return;
     }
     
-    hud = [MBProgressHUD HUDForView:self.view.window];
+    hud = [MBProgressHUD HUDForView:self.view];
     hud.label.text = NSLocalizedString(@"downloading", nil);
     usleep(100000);
     isDownloading = YES;
@@ -208,7 +208,7 @@ static volatile BOOL sg_isWorking = NO;
             // 更新界面
             dispatch_async(dispatch_get_main_queue(), ^{
                 
-                hud = [MBProgressHUD HUDForView:self.view.window];
+                hud = [MBProgressHUD HUDForView:self.view];
                 hud.label.text = NSLocalizedString(@"downloadOK", nil);
             });
             
@@ -257,7 +257,7 @@ static volatile BOOL sg_isWorking = NO;
         int packnum=0;
         
         
-        hud = [MBProgressHUD HUDForView:self.view.window];
+        hud = [MBProgressHUD HUDForView:self.view];
         hud.mode = MBProgressHUDModeDeterminateHorizontalBar;
         __block float progress = 0.0f;
         dispatch_async(dispatch_get_main_queue(), ^{
@@ -443,26 +443,84 @@ static volatile BOOL sg_isWorking = NO;
         });
         
         memset(receiveBytes, 0, 50);
-        iRet = [self waitForRestart:receiveBytes timeout:40];
+        iRet = [self waitForRestart:receiveBytes timeout:25];
         if (iRet<0) {
             dispatch_async(dispatch_get_main_queue(), ^{
-                [hud hideAnimated:YES];
-                
-                [_statusLog setText:NSLocalizedString(@"updateFirmFail", nil)];
-                
-                ZBHAlertViewController *alertView = [[ZBHAlertViewController alloc] initWithTitle:NSLocalizedString(@"updateFailbyTimeout", nil) message:NSLocalizedString(@"LastACKError", nil) viewController:self];
+                ZBHAlertViewController *alertView = [[ZBHAlertViewController alloc] initWithTitle:NSLocalizedString(@"updateFailbyTimeout", nil) message:NSLocalizedString(@"reInsert", nil) viewController:self];
                 RIButtonItem *okItem = [RIButtonItem itemWithLabel:NSLocalizedString(@"makeSure", nil) action:^{
-                    isUpdating = NO;
-                    [self setButtonEnable:YES];
+                    
+                    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+                        
+                        Byte receive[50];
+                        memset(receive, 0, 50);
+                        int iiRet = [self waitForRestart2:receive timeout:25];
+                        if (iiRet<0) {
+                            
+                            [hud hideAnimated:YES];
+                            [_statusLog setText:NSLocalizedString(@"updateFirmFail", nil)];
+                            dispatch_async(dispatch_get_main_queue(), ^{
+                                ZBHAlertViewController *alertView2 = [[ZBHAlertViewController alloc] initWithTitle:NSLocalizedString(@"updateFailbyTimeout", nil) message:NSLocalizedString(@"reInsert", nil) viewController:self];
+                                RIButtonItem *okItem = [RIButtonItem itemWithLabel:NSLocalizedString(@"makeSure", nil) action:^{
+                                    isUpdating = NO;
+                                    [self setButtonEnable:YES];
+                                }];
+                                [alertView2 addButton:okItem type:RIButtonItemType_Destructive];
+                                [alertView2 show];
+                            });
+                            return;
+                        }
+                        
+                        progress  = hud.progress;
+                        while (progress < 1.0f) {
+                            progress += 0.01f;
+                            dispatch_async(dispatch_get_main_queue(), ^{
+                                hud.progress = progress;
+                            });
+                            usleep(50000);
+                        }
+                        
+                        Byte retCode = receive[2];
+                        if(retCode==0x07)//升级成功
+                        {
+                            dispatch_async(dispatch_get_main_queue(), ^{
+                                
+                                UIImage *image = [[UIImage imageNamed:@"Checkmark"] imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
+                                UIImageView *imageView = [[UIImageView alloc] initWithImage:image];
+                                hud.customView = imageView;
+                                hud.mode = MBProgressHUDModeCustomView;
+                                hud.label.text = NSLocalizedString(@"firmwareFINSH", nil);
+                                [_statusLog setText:NSLocalizedString(@"firmwareFINSH", nil)];
+                                
+                                [hud.button setTitle:NSLocalizedString(@"makeSure", nil) forState:UIControlStateNormal];
+                                [hud.button addTarget:self action:@selector(makeSureWork:) forControlEvents:UIControlEventTouchUpInside];
+                                
+                            });
+                            
+                        }else{
+                            
+                            dispatch_async(dispatch_get_main_queue(), ^{
+                                [hud hideAnimated:YES];
+                                [_statusLog setText:NSLocalizedString(@"updateFirmFail", nil)];
+                                ZBHAlertViewController *alertView = [[ZBHAlertViewController alloc] initWithTitle:NSLocalizedString(@"updateFirmFail", nil) message:@"" viewController:self];
+                                RIButtonItem *okItem = [RIButtonItem itemWithLabel:NSLocalizedString(@"makeSure", nil) action:^{
+                                    isUpdating = NO;
+                                    [self setButtonEnable:YES];
+                                }];
+                                [alertView addButton:okItem type:RIButtonItemType_Destructive];
+                                [alertView show];
+                            });
+                        }
+                        return;
+                        
+                    });
+                    
                 }];
                 [alertView addButton:okItem type:RIButtonItemType_Destructive];
                 [alertView show];
             });
-            
             return ;
         }
         
-    
         progress  = hud.progress;
         while (progress < 1.0f) {
             progress += 0.01f;
@@ -530,6 +588,9 @@ static volatile BOOL sg_isWorking = NO;
 //    UILongPressGestureRecognizer *longPress=[[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(force2update:)];
 //    longPress.minimumPressDuration=0.6;//定义按的时间
 //    [_updateFirware addGestureRecognizer:longPress];
+    
+    
+    
 
     [self.xxxtitle setText:NSLocalizedString(@"xxxxxTitle", nil)];
     isUpdating = NO;
@@ -842,11 +903,56 @@ static volatile BOOL sg_isWorking = NO;
             break;
         usleep(10000);
         dispatch_async(dispatch_get_main_queue(), ^{
-            hud = [MBProgressHUD HUDForView:self.view.window];
+            hud = [MBProgressHUD HUDForView:self.view];
             float process = hud.progress;
             process += 0.00025f;
             hud.progress = process;
         });
+    }
+    
+    if (!receivedCompleted) {
+        sg_isWorking = NO;
+        return -1;//timeout
+    }
+    
+    Byte *tmp = (Byte*)[_recevicedData bytes];
+    int length = (int)[_recevicedData length];
+    if (length == 0) {
+        return -1;
+    }
+    
+    memcpy(outBytes, tmp,length);
+    sg_isWorking = NO;
+    return length;
+}
+
+
+/**
+ -1 timeout
+ -3 一次发送接收未完成
+ > 长度
+ */
+- (int)waitForRestart2:(Byte*)outBytes timeout:(int) timeout
+{
+    if (sg_isWorking==YES) {
+        return -3;//已经在发送接收中，请等待一次发送接收完毕
+    }
+    sg_isWorking = YES;
+    receivedCompleted = NO;
+    
+    //清空数据
+    [_recevicedData resetBytesInRange:NSMakeRange(0,_recevicedData.length)];
+    [_recevicedData setLength:0];
+    
+    dispatch_async(dispatch_get_main_queue(), ^{ //解决多线程写数据冲突的问题，使用main_queue进行排队
+        [_eaSessionController writeData:nil];
+    });
+    
+    double timeSeconds = [self currentTimeSeconds] + timeout;
+    while ([self currentTimeSeconds] < timeSeconds) {
+        if(receivedCompleted)
+            break;
+        usleep(1000);
     }
     
     if (!receivedCompleted) {

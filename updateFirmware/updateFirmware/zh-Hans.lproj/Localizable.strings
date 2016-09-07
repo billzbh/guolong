@@ -32,6 +32,7 @@
 "makeSure"="确定";
 "cancelStop"="取消";
 "makeSureDeviceConnect"="请确定耳机设备已经连接！";
+"pleasePluginDevice"="请插入耳机设备!";
 "LocalHighthanRemote"="本地设备版本等于远程版本";
 "forceUpdateTip"="无需升级固件";
 "ACKError"="升级程序应答错误";
@@ -41,3 +42,4 @@
 "waitForUpdate"="固件升级中，请等待...";
 "firmwareFINSH"="固件升级成功";
 "xxxxxTitle" = "固件升级程序";
+"reInsert"="点击确定后，请重新插拔一下耳机!";

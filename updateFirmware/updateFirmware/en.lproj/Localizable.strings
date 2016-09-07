@@ -31,7 +31,8 @@
 "checkNetwork"="please check the network and try again！";
 "makeSure"="OK";
 "cancelStop"="Cancel";
-"makeSureDeviceConnect"="please make sure the MIF device has connected";
+"makeSureDeviceConnect"="please make sure the MFI device has connected";
+"pleasePluginDevice"="please plugin device to iPad or iphone";
 "LocalHighthanRemote"="Local version is equal to Remote Verison";
 "forceUpdateTip"="you don't need to update firmware";
 "ACKError"="ACK error";
@@ -41,3 +42,4 @@
 "waitForUpdate"="please wait for firmware update";
 "firmwareFINSH"="firmware update success";
 "xxxxxTitle" = "FirmWare Update Program";
+"reInsert"="click OK ，then plugin device again!";

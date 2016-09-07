@@ -10,27 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "updateFirmware/DeviceTViewController.m"
-            timestampString = "494326280.867988"
+            timestampString = "494834289.893264"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "404"
-            endingLineNumber = "404"
-            landmarkName = "-updateFirmware"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "updateFirmware/DeviceTViewController.m"
-            timestampString = "494326280.867988"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "454"
-            endingLineNumber = "454"
+            startingLineNumber = "450"
+            endingLineNumber = "450"
             landmarkName = "-updateFirmware"
             landmarkType = "5">
             <Locations>
@@ -38,31 +22,31 @@
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "__39-[DeviceTViewController updateFirmware]_block_invoke.270"
+                  symbolName = "__39-[DeviceTViewController updateFirmware]_block_invoke.268"
                   moduleName = "updateFirmware"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/lig/Desktop/guolong/updateFirmware/updateFirmware/DeviceTViewController.m"
-                  timestampString = "494328986.460636"
+                  timestampString = "494851215.135997"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "454"
-                  endingLineNumber = "454"
-                  offsetFromSymbolStart = "766">
+                  startingLineNumber = "450"
+                  endingLineNumber = "450"
+                  offsetFromSymbolStart = "474">
                </Location>
                <Location
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "__39-[DeviceTViewController updateFirmware]_block_invoke_2.273"
+                  symbolName = "__39-[DeviceTViewController updateFirmware]_block_invoke_2.271"
                   moduleName = "updateFirmware"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/lig/Desktop/guolong/updateFirmware/updateFirmware/DeviceTViewController.m"
-                  timestampString = "494328986.460889"
+                  timestampString = "494851215.136319"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "454"
-                  endingLineNumber = "454"
-                  offsetFromSymbolStart = "46">
+                  startingLineNumber = "450"
+                  endingLineNumber = "450"
+                  offsetFromSymbolStart = "12">
                </Location>
             </Locations>
          </BreakpointContent>
